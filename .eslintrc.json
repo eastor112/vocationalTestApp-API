@@ -1,0 +1,40 @@
+{
+    "env": {
+        "commonjs": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "airbnb-base"
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest"
+    },
+    "rules": {
+
+
+      "object-curly-newline": [
+        "error",
+        {
+          "ObjectExpression": {
+            "multiline": true,
+            "consistent": true
+          },
+          "ObjectPattern": {
+            "multiline": true,
+            "consistent": true
+          },
+          "ImportDeclaration": {
+            "multiline": true,
+            "consistent": true
+          },
+          "ExportDeclaration": {
+            "minProperties": 3,
+            "multiline": true,
+            "consistent": true
+          }
+        }
+      ],
+      "quotes":["error", "single"]
+    }
+  }
