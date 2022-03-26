@@ -1,8 +1,19 @@
+require('dotenv').config();
+
 const express = require('express');
 
+const configExpress = require('./config/express');
+const connectDB = require('./config/database');
+const routes = require('./routes');
+
 const app = express();
-const port = 8880;
 
-app.get('/', (req, res) => res.send('Hello World!'));
+connectDB();
+configExpress(app);
+routes(app);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`));
+const port = process.env.PORT || 8080;
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}/`);
+});

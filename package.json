@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev":"nodemon app.js",
+    "dev": "nodemon app.js",
     "prepare": "husky install",
     "lint": "eslint --ext .js ./",
     "lint:fix": "eslint --ext .js ./ --fix"
@@ -30,7 +30,10 @@
     "nodemon": "^2.0.15"
   },
   "dependencies": {
-    "express": "^4.17.3"
+    "dotenv": "^16.0.0",
+    "express": "^4.17.3",
+    "mongoose": "^6.2.8",
+    "morgan": "^1.10.0"
   },
   "lint-staged": {
     "*.js": "eslint --cache --fix"
