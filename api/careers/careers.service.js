@@ -3,7 +3,7 @@ const CareerModel = require('./careers.model');
 const getAllCareers = async () => CareerModel.find();
 
 async function getOneCareer(id) {
-  const task = await UserModel.findById(id);
+  const task = await CareerModel.findById(id);
 
   if (!task) {
     return null;
