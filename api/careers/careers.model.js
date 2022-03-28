@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
 
 const CareerSchema = new mongoose.Schema({
-  names: String,
+  name: String,
   description: String,
   field: {
     description: String,
     list: Array,
-    references: String,
+    references: Array,
   },
   skills: {
     description: String,
     list: Array,
     references: Array,
   },
+  photo: String,
 
 });
 

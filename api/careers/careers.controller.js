@@ -24,14 +24,15 @@ const handlerDeleteCareer = async (req, res) => {
 };
 
 const handlerCreateCareer = async (req, res) => {
-  const { nameOfCareer, fieldOfCareer, universityName } = req.body;
+  const { name, description } = req.body;
 
-  if (!nameOfCareer) {
+  if (!name) {
     res.status(400).json({ msg: 'the name Of Career is required' });
-  } if (!fieldOfCareer) {
-    res.status(400).json({ msg: 'Enter the fiel for this career' });
-  } if (!universityName) {
-    res.status(400).json({ msg: 'universityName is required' });
+  } if (!description) {
+    res.status(400).json({ msg: 'Enter the description for this career' });
+  // } if (!universityName) {
+  //   res.status(400).json({ msg: 'universityName is required' });
+  // }
   }
 
   const newCareer = await createCareer(req.body);
