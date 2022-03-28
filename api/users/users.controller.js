@@ -28,9 +28,9 @@ const handlerCreateUser = async (req, res) => {
 
   if (!password) {
     res.status(400).json({ msg: 'Password is required' });
-  } if (!email) {
+  } else if (!email) {
     res.status(400).json({ msg: 'Email is required' });
-  } if (!role) {
+  } else if (!role) {
     res.status(400).json({ msg: 'Role is required' });
   }
 
@@ -40,8 +40,7 @@ const handlerCreateUser = async (req, res) => {
 
 const handlerUpdateUser = async (req, res) => {
   const { id } = req.params;
-
-  const user = updateUser(id, req.body);
+  const user = await updateUser(id, req.body);
 
   if (!user) {
     res.status(404).json({ message: `User not found with id: ${id}` });

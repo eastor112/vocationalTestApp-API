@@ -22,12 +22,13 @@ async function deleteUser(id) {
   return user;
 }
 
-function createUser(newUser) {
+async function createUser(newUser) {
   return new UserModel(newUser).save();
 }
 
-function updateUser(id, user) {
-  return UserModel.findByIdAndUpdate(id, user, { new: true });
+async function updateUser(id, user) {
+  const updatedUser = await UserModel.findByIdAndUpdate(id, user, { new: true });
+  return updatedUser;
 }
 
 module.exports = {
