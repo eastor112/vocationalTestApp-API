@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const UniversitySchema = new mongoose.Schema({
-  id: Number,
   name: String,
   logo: String,
   campus: Array,
