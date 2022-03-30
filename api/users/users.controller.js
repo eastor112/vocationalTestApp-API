@@ -14,7 +14,10 @@ const handlerAllUsers = async (req, res) => {
 const handlerOneUser = async (req, res) => {
   const { id } = req.params;
   const user = await getOneUser(id);
-  res.json(user);
+  if (!user) {
+    return res.status(404).json({ message: `User not found with id: ${id}` });
+  }
+  return res.json(user);
 };
 
 const handlerDeleteUser = async (req, res) => {
@@ -23,7 +26,7 @@ const handlerDeleteUser = async (req, res) => {
   res.json({ msg: 'User deleted' });
 };
 
-async function handlerCreateUser(req, res) {
+const handlerCreateUser = async (req, res) => {
   const newUser = req.body;
   try {
     const user = await createUser(newUser);
@@ -31,7 +34,7 @@ async function handlerCreateUser(req, res) {
   } catch (error) {
     res.status(500).json(error);
   }
-}
+};
 
 const handlerUpdateUser = async (req, res) => {
   const { id } = req.params;
