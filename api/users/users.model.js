@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
   email: {
     required: true,
     type: String,
+    unique: true,
   },
   role: {
     type: String,
@@ -60,6 +61,14 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
   } catch (error) {
     return error;
   }
+};
+
+UserSchema.methods.toJSON = function () {
+  const user = this;
+  const { password, _id, __v, ...rest } = user.toObject();
+  rest.uid = _id;
+
+  return rest;
 };
 
 module.exports = mongoose.model('User', UserSchema);
