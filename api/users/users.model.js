@@ -15,25 +15,23 @@ const UserSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: 'guest',
+    default: 'STUDENT',
+    enum: ['ADMIN', 'INSTITUTION', 'STUDENT'],
+    required: true,
   },
   profile: String,
   address: {
-    street: String,
-    suite: String,
+    country: String,
     city: String,
-    zipcode: String,
     geo: {
       lat: String,
       lng: String,
     },
   },
   phone: String,
-  website: String,
-  company: {
-    name: String,
-    catchPhrase: String,
-    bs: String,
+  university: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'University',
   },
 });
 
