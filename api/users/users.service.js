@@ -1,9 +1,9 @@
-const UserModel = require('./users.model');
+const User = require('./users.model');
 
-const getAllUsers = async () => UserModel.find();
+const getAllUsers = async () => User.find();
 
 async function getOneUser(id) {
-  const task = await UserModel.findById(id);
+  const task = await User.findById(id);
 
   if (!task) {
     return null;
@@ -13,7 +13,7 @@ async function getOneUser(id) {
 }
 
 async function deleteUser(id) {
-  const user = await UserModel.findByIdAndDelete(id);
+  const user = await User.findByIdAndDelete(id);
 
   if (!user) {
     return null;
@@ -22,12 +22,13 @@ async function deleteUser(id) {
   return user;
 }
 
-async function createUser(newUser) {
-  return new UserModel(newUser).save();
+async function createUser(user) {
+  const newUser = await User.create(user);
+  return newUser;
 }
 
 async function updateUser(id, user) {
-  const updatedUser = await UserModel.findByIdAndUpdate(id, user, { new: true });
+  const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
   return updatedUser;
 }
 

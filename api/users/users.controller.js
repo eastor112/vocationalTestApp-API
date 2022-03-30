@@ -23,20 +23,15 @@ const handlerDeleteUser = async (req, res) => {
   res.json({ msg: 'User deleted' });
 };
 
-const handlerCreateUser = async (req, res) => {
-  const { password, email, role } = req.body;
-
-  if (!password) {
-    res.status(400).json({ msg: 'Password is required' });
-  } else if (!email) {
-    res.status(400).json({ msg: 'Email is required' });
-  } else if (!role) {
-    res.status(400).json({ msg: 'Role is required' });
+async function handlerCreateUser(req, res) {
+  const newUser = req.body;
+  try {
+    const user = await createUser(newUser);
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json(error);
   }
-
-  const newUser = await createUser(req.body);
-  res.status(201).json(newUser);
-};
+}
 
 const handlerUpdateUser = async (req, res) => {
   const { id } = req.params;
