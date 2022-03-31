@@ -35,6 +35,10 @@ const UserSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'University',
   },
+  state: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 UserSchema.pre('save', async function (next) {
@@ -54,6 +58,23 @@ UserSchema.pre('save', async function (next) {
   }
 });
 
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const user = this;
+  const modifiedPassword = user.getUpdate().password;
+  if (modifiedPassword) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(modifiedPassword, salt);
+
+      user.getUpdate().password = hash;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  }
+  return next();
+});
+
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   const user = this;
   try {
@@ -65,10 +86,28 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 
 UserSchema.methods.toJSON = function () {
   const user = this;
-  const { password, _id, __v, ...rest } = user.toObject();
+  const { password, _id, __v, state, ...rest } = user.toObject();
   rest.uid = _id;
 
   return rest;
 };
+
+UserSchema.virtual('public').get(function () {
+  const user = this;
+  const {
+    _id, names, fatherName, motherName, username, role, email, university,
+  } = user;
+
+  return {
+    uid: _id,
+    names,
+    fatherName,
+    motherName,
+    username,
+    role,
+    email,
+    university,
+  };
+});
 
 module.exports = mongoose.model('User', UserSchema);
