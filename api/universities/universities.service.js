@@ -4,6 +4,9 @@ const getAllUniversities = async () => UniversitiesModel.find();
 
 async function getOneUniversity(id) {
   const university = await UniversitiesModel.findById(id);
+  if (!university) {
+    return null;
+  }
   return university;
 }
 

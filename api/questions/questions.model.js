@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 
 const QuestionSchema = new mongoose.Schema({
-  id: String,
   idTest: Number,
   type: String,
   statement: String,
