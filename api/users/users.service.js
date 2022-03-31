@@ -1,6 +1,14 @@
 const User = require('./users.model');
 
-const getAllUsers = async () => User.find();
+const getAllUsers = async (limit, page) => {
+  const query = { state: true };
+
+  const [total, users] = await Promise.all([
+    await User.countDocuments(query),
+    await User.find(query).limit(limit).skip(limit * (page - 1)),
+  ]);
+  return { total, users };
+};
 
 const getOneUser = async (id) => {
   const task = await User.findById(id);
@@ -13,11 +21,7 @@ const getOneUser = async (id) => {
 };
 
 const deleteUser = async (id) => {
-  const user = await User.findByIdAndDelete(id);
-
-  if (!user) {
-    return null;
-  }
+  const user = await User.findByIdAndUpdate(id, { state: false }, { new: true });
 
   return user;
 };
