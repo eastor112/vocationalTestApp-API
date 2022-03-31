@@ -1,7 +1,12 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { isValidRole, emailExist, userExistById } = require('../../helpers/customValidators');
-const { fieldsValidatorMw } = require('../../midlewares/filedsValidator');
+
+const {
+  fieldsValidatorMw,
+  isAdminRoleMw,
+  validateJwtMw,
+} = require('../../middlewares');
 
 const {
   handlerAllUsers,
@@ -18,12 +23,16 @@ router.get('/', [
 ], handlerAllUsers);
 
 router.get('/:id', [
+  validateJwtMw,
+  isAdminRoleMw,
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(userExistById),
   fieldsValidatorMw,
 ], handlerOneUser);
 
 router.delete('/:id', [
+  validateJwtMw,
+  isAdminRoleMw,
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(userExistById),
   fieldsValidatorMw,
@@ -38,6 +47,7 @@ router.post('/', [
 ], handlerCreateUser);
 
 router.patch('/:id', [
+  validateJwtMw,
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(userExistById),
   check('role').custom(isValidRole),

@@ -10,8 +10,8 @@ const isValidRole = async (rol = '') => {
 
 const userExistById = async (id) => {
   const user = await User.findById(id);
-  if (!user) {
-    throw new Error(`the user with id ${id} dosn't exist`);
+  if (!user || !user.state) {
+    throw new Error(`the user with id ${id} doesn't exist`);
   }
 };
 
