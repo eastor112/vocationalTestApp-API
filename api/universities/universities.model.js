@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
 const UniversitySchema = new mongoose.Schema({
-  id: Number,
-  name: String,
+  name: {
+    required: true,
+    type: String,
+  },
   logo: String,
   campus: Array,
   ranking: {
@@ -32,7 +34,10 @@ const UniversitySchema = new mongoose.Schema({
 
   },
   ],
-  url: String,
+  url: {
+    required: true,
+    type: String,
+  },
 });
 
 module.exports = mongoose.model('University', UniversitySchema);
