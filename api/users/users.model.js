@@ -2,10 +2,22 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
-  names: String,
-  fatherName: String,
-  motherName: String,
-  username: String,
+  names: {
+    type: String,
+    default: '',
+  },
+  fatherName: {
+    type: String,
+    default: '',
+  },
+  motherName: {
+    type: String,
+    default: '',
+  },
+  username: {
+    type: String,
+    default: '',
+  },
   password: {
     type: String,
     required: true,
@@ -19,18 +31,35 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 'STUDENT',
     enum: ['ADMIN', 'INSTITUTION', 'STUDENT'],
-    required: true,
   },
-  profile: String,
+  profile: {
+    type: String,
+    default: '',
+  },
   address: {
-    country: String,
-    city: String,
+    country: {
+      type: String,
+      default: '',
+    },
+    city: {
+      type: String,
+      default: '',
+    },
     geo: {
-      lat: String,
-      lng: String,
+      lat: {
+        type: String,
+        default: '',
+      },
+      lng: {
+        type: String,
+        default: '',
+      },
     },
   },
-  phone: String,
+  phone: {
+    type: String,
+    default: '',
+  },
   university: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'University',
@@ -38,6 +67,10 @@ const UserSchema = new mongoose.Schema({
   state: {
     type: Boolean,
     default: true,
+  },
+  google: {
+    type: Boolean,
+    default: false,
   },
 });
 
@@ -86,7 +119,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 
 UserSchema.methods.toJSON = function () {
   const user = this;
-  const { password, _id, __v, state, ...rest } = user.toObject();
+  const { password, _id, __v, state, google, ...rest } = user.toObject();
   rest.uid = _id;
 
   return rest;
