@@ -38,6 +38,7 @@
     "google-auth-library": "^7.14.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.2.8",
+    "mongoose-sequence": "^5.3.1",
     "morgan": "^1.10.0"
   },
   "lint-staged": {

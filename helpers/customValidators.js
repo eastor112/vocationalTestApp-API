@@ -1,5 +1,6 @@
 const User = require('../api/users/users.model');
 const Role = require('../commonModels/roles');
+const Billing = require('../api/billings/billings.model');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -22,8 +23,15 @@ const emailExist = async (email = '') => {
   }
 };
 
+const billingExistById = async (id) => {
+  const billing = await Billing.findById(id);
+  if (!billing || !billing.state) {
+    throw new Error(`the billing with id ${id} doesn't exist`);
+  }
+};
 module.exports = {
   isValidRole,
   userExistById,
+  billingExistById,
   emailExist,
 };
