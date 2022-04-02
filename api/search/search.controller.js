@@ -1,6 +1,10 @@
 const { ObjectId } = require('mongoose').Types;
+const University = require('../universities/universities.model');
 const User = require('../users/users.model');
-const { searchUsers } = require('./search.service');
+const {
+  searchUsers,
+  searchUniversities,
+} = require('./search.service');
 
 const handlerUsersSearch = async (req, res) => {
   const { query } = req.params;
@@ -9,8 +13,11 @@ const handlerUsersSearch = async (req, res) => {
   const isMongoId = ObjectId.isValid(query);
 
   if (isMongoId) {
-    const user = await User.findById(query);
+    const user = await User.findById(query).populate('university', 'name');
     return res.json({
+      totalDocs: 1,
+      currentPage: 1,
+      totalPages: 1,
       results: user ? [user] : [],
     });
   }
@@ -27,8 +34,28 @@ const handlerUsersSearch = async (req, res) => {
 
 const handlerUniversitiesSearch = async (req, res) => {
   const { query } = req.params;
+  const { limit = 5, page = 1 } = req.query;
 
-  res.json({ msg: 'handlerUniversitiesSearch' });
+  const isMongoId = ObjectId.isValid(query);
+
+  if (isMongoId) {
+    const university = await University.findById(query);
+    return res.json({
+      totalDocs: 1,
+      currentPage: 1,
+      totalPages: 1,
+      results: university ? [university] : [],
+    });
+  }
+
+  const { total, universities } = await searchUniversities(query, limit, page);
+
+  return res.json({
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    results: universities,
+  });
 };
 
 const handlerCareersSearch = async (req, res) => {
