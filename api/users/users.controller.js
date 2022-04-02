@@ -12,7 +12,6 @@ const handlerAllUsers = async (req, res) => {
 
   res.json({
     totalDocs: total,
-    totalPage: Number(limit),
     currentPage: Number(page),
     totalPages: Math.ceil(total / limit),
     users,

@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const { validateJwtMw, isAdminRoleMw } = require('../../middlewares');
 
 const {
   handlerUsersSearch,
@@ -13,13 +14,17 @@ const {
 
 const router = Router();
 
-router.get('/users/:query', handlerUsersSearch);
+router.get('/users/:query', [
+  validateJwtMw,
+  isAdminRoleMw,
+], handlerUsersSearch);
+
 router.get('/universities/:query', handlerUniversitiesSearch);
 router.get('/careers/:query', handlerCareersSearch);
+router.get('/offers/:query', handlerOffersSearch);
 router.get('/questions/:query', handlerQuestionsSearch);
 router.get('/tests/:query', handlerTestsSearch);
 router.get('/billings/:query', handlerBillingsSearch);
-router.get('/offers/:query', handlerOffersSearch);
 router.get('/results/:query', handlerResultsSearch);
 
 module.exports = router;

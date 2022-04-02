@@ -72,6 +72,11 @@ const UserSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+}, {
+  timestamps: {
+    createdAt: 'created_at',
+    updatedAt: 'updated_at',
+  },
 });
 
 UserSchema.pre('save', async function (next) {
@@ -119,8 +124,12 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 
 UserSchema.methods.toJSON = function () {
   const user = this;
-  const { password, _id, __v, state, google, ...rest } = user.toObject();
+  /* eslint-disable */
+  const { password, _id, __v, state, google, updated_at, created_at, ...rest } = user.toObject();
   rest.uid = _id;
+  rest.createdAt = created_at;
+  rest.updatedAt = updated_at;
+  /* eslint-enable */
 
   return rest;
 };
