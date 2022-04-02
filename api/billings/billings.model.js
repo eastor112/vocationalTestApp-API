@@ -34,6 +34,11 @@ const BillingSchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  condition: {
+    type: String,
+    enum: ['PENDING', 'COMPLETED', 'CANCELED'],
+    default: 'PENDING',
+  },
 }, {
   timestamps: true,
 });

@@ -24,7 +24,9 @@ router.get('/careers/:query', handlerCareersSearch);
 router.get('/offers/:query', handlerOffersSearch);
 router.get('/questions/:query', handlerQuestionsSearch);
 router.get('/tests/:query', handlerTestsSearch);
-router.get('/billings/:query', handlerBillingsSearch);
+router.get('/billings/:query', [
+  validateJwtMw,
+], handlerBillingsSearch);
 router.get('/results/:query', handlerResultsSearch);
 
 module.exports = router;

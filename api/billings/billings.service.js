@@ -8,7 +8,7 @@ const getAllBillings = async (limit, page) => {
     Billing.find(query)
       .limit(limit)
       .skip(limit * (page - 1))
-      .populate('user', 'name email')]);
+      .populate('user', 'names email')]);
 
   return {
     total,
@@ -18,7 +18,7 @@ const getAllBillings = async (limit, page) => {
 
 const getOneBilling = async (id) => {
   const billing = await Billing.findById(id)
-    .populate('user', 'name email');
+    .populate('user', 'names email');
 
   if (!billing || !billing.state) {
     return null;
@@ -34,7 +34,7 @@ const createBilling = async (newBilling) => {
 
 const updateBilling = async (id, newData) => {
   const billing = await Billing.findByIdAndUpdate(id, newData, { new: true })
-    .populate('user', 'name email');
+    .populate('user', 'names email');
 
   return billing;
 };
