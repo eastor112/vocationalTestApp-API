@@ -20,13 +20,16 @@ router.get('/users/:query', [
 ], handlerUsersSearch);
 
 router.get('/universities/:query', handlerUniversitiesSearch);
+
 router.get('/careers/:query', handlerCareersSearch);
 router.get('/offers/:query', handlerOffersSearch);
 router.get('/questions/:query', handlerQuestionsSearch);
 router.get('/tests/:query', handlerTestsSearch);
+
 router.get('/billings/:query', [
   validateJwtMw,
 ], handlerBillingsSearch);
-router.get('/results/:query', handlerResultsSearch);
+
+router.get('/results', handlerResultsSearch);
 
 module.exports = router;

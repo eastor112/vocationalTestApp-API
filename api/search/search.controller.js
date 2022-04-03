@@ -2,10 +2,12 @@ const { ObjectId } = require('mongoose').Types;
 const University = require('../universities/universities.model');
 const User = require('../users/users.model');
 const Billing = require('../billings/billings.model');
+const TestResults = require('../testResults/testResults.model');
 const {
   searchUsers,
   searchUniversities,
   searchBilling,
+  searchResults,
 } = require('./search.service');
 
 const handlerUsersSearch = async (req, res) => {
@@ -138,9 +140,41 @@ const handlerOffersSearch = async (req, res) => {
 };
 
 const handlerResultsSearch = async (req, res) => {
-  const { query } = req.params;
+  const { id, user, limit = 5, page = 1 } = req.query;
 
-  res.json({ msg: 'handlerResultsSearch' });
+  if (id && user) {
+    return res.status(400).json({
+      msg: 'Only one parameter \'id\' or \'user\' can be passed',
+    });
+  }
+
+  try {
+    if (ObjectId.isValid(id)) {
+      const result = await searchResults(id, user, limit, page);
+
+      return res.json({
+        totalDocs: result.length > 0 ? 1 : 0,
+        currentPage: 1,
+        totalPages: 1,
+        results: result,
+      });
+    }
+
+    if (ObjectId.isValid(user)) {
+      const { total, results } = await searchResults(id, user, limit, page);
+
+      return res.json({
+        totalDocs: total,
+        currentPage: Number(page),
+        totalPages: Math.ceil(total / limit),
+        results,
+      });
+    }
+
+    throw new Error('Invalid id or userId');
+  } catch (error) {
+    return res.status(400).json({ msg: error.message });
+  }
 };
 
 module.exports = {

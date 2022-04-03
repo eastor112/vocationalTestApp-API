@@ -1,6 +1,8 @@
+const { ObjectId } = require('mongoose').Types;
 const User = require('../users/users.model');
 const University = require('../universities/universities.model');
 const Billing = require('../billings/billings.model');
+const TestResults = require('../testResults/testResults.model');
 
 const searchUsers = async (query, limit, page) => {
   const queryRegex = new RegExp(query, 'i');
@@ -72,8 +74,31 @@ const searchBilling = async (query, limit, page) => {
   return { total, billings };
 };
 
+const searchResults = async (id, user, limit, page) => {
+  if (id) {
+    const result = await TestResults.findById(id)
+      .populate('user', 'names email');
+
+    return result ? [result] : [];
+  }
+
+  if (user) {
+    const [total, results] = await Promise.all([
+      await TestResults.countDocuments({ user: { _id: user, state: true } }),
+      await TestResults.find({ user: { _id: user, state: true } })
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('user', 'names email'),
+    ]);
+    return { total, results };
+  }
+
+  throw new Error('id is not valid');
+};
+
 module.exports = {
   searchUsers,
   searchUniversities,
   searchBilling,
+  searchResults,
 };
