@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
   names: String,
@@ -12,29 +13,101 @@ const UserSchema = new mongoose.Schema({
   email: {
     required: true,
     type: String,
+    unique: true,
   },
   role: {
     type: String,
-    default: 'guest',
+    default: 'STUDENT',
+    enum: ['ADMIN', 'INSTITUTION', 'STUDENT'],
+    required: true,
   },
   profile: String,
   address: {
-    street: String,
-    suite: String,
+    country: String,
     city: String,
-    zipcode: String,
     geo: {
       lat: String,
       lng: String,
     },
   },
   phone: String,
-  website: String,
-  company: {
-    name: String,
-    catchPhrase: String,
-    bs: String,
+  university: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'University',
   },
+  state: {
+    type: Boolean,
+    default: true,
+  },
+});
+
+UserSchema.pre('save', async function (next) {
+  const user = this;
+  try {
+    if (!user.isModified('password')) {
+      return next();
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(user.password, salt);
+
+    user.password = hash;
+    return next();
+  } catch (error) {
+    return next(error);
+  }
+});
+
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const user = this;
+  const modifiedPassword = user.getUpdate().password;
+  if (modifiedPassword) {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(modifiedPassword, salt);
+
+      user.getUpdate().password = hash;
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  }
+  return next();
+});
+
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  const user = this;
+  try {
+    return await bcrypt.compareSync(candidatePassword, user.password);
+  } catch (error) {
+    return error;
+  }
+};
+
+UserSchema.methods.toJSON = function () {
+  const user = this;
+  const { password, _id, __v, state, ...rest } = user.toObject();
+  rest.uid = _id;
+
+  return rest;
+};
+
+UserSchema.virtual('public').get(function () {
+  const user = this;
+  const {
+    _id, names, fatherName, motherName, username, role, email, university,
+  } = user;
+
+  return {
+    uid: _id,
+    names,
+    fatherName,
+    motherName,
+    username,
+    role,
+    email,
+    university,
+  };
 });
 
 module.exports = mongoose.model('User', UserSchema);

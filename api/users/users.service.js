@@ -1,35 +1,40 @@
-const UserModel = require('./users.model');
+const User = require('./users.model');
 
-const getAllUsers = async () => UserModel.find();
+const getAllUsers = async (limit, page) => {
+  const query = { state: true };
 
-async function getOneUser(id) {
-  const task = await UserModel.findById(id);
+  const [total, users] = await Promise.all([
+    await User.countDocuments(query),
+    await User.find(query).limit(limit).skip(limit * (page - 1)),
+  ]);
+  return { total, users };
+};
+
+const getOneUser = async (id) => {
+  const task = await User.findById(id);
 
   if (!task) {
     return null;
   }
 
   return task;
-}
+};
 
-async function deleteUser(id) {
-  const user = await UserModel.findByIdAndDelete(id);
-
-  if (!user) {
-    return null;
-  }
+const deleteUser = async (id) => {
+  const user = await User.findByIdAndUpdate(id, { state: false }, { new: true });
 
   return user;
-}
+};
 
-async function createUser(newUser) {
-  return new UserModel(newUser).save();
-}
+const createUser = async (user) => {
+  const newUser = await User.create(user);
+  return newUser;
+};
 
-async function updateUser(id, user) {
-  const updatedUser = await UserModel.findByIdAndUpdate(id, user, { new: true });
+const updateUser = async (id, user) => {
+  const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
   return updatedUser;
-}
+};
 
 module.exports = {
   getAllUsers,

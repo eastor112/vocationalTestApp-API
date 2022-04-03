@@ -7,45 +7,56 @@ const {
 } = require('./users.service');
 
 const handlerAllUsers = async (req, res) => {
-  const users = await getAllUsers();
-  res.json(users);
+  const { limit = 5, page = 1 } = req.query;
+  const { total, users } = await getAllUsers(limit, page);
+
+  res.json({
+    totalDocs: total,
+    totalPage: Number(limit),
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    users,
+  });
 };
 
 const handlerOneUser = async (req, res) => {
   const { id } = req.params;
   const user = await getOneUser(id);
-  res.json(user);
+  if (!user) {
+    return res.status(404).json({ message: `User not found with id: ${id}` });
+  }
+  return res.json(user);
 };
 
 const handlerDeleteUser = async (req, res) => {
   const { id } = req.params;
-  await deleteUser(id);
-  res.json({ msg: 'User deleted' });
+  const { email } = await deleteUser(id);
+  res.json({ msg: `User ${email} was deleted` });
 };
 
 const handlerCreateUser = async (req, res) => {
-  const { password, email, role } = req.body;
-
-  if (!password) {
-    res.status(400).json({ msg: 'Password is required' });
-  } else if (!email) {
-    res.status(400).json({ msg: 'Email is required' });
-  } else if (!role) {
-    res.status(400).json({ msg: 'Role is required' });
+  const newUser = req.body;
+  try {
+    const user = await createUser(newUser);
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(500).json(error);
   }
-
-  const newUser = await createUser(req.body);
-  res.status(201).json(newUser);
 };
 
 const handlerUpdateUser = async (req, res) => {
   const { id } = req.params;
-  const user = await updateUser(id, req.body);
+  const { _id, email, state, role, ...rest } = req.body;
 
-  if (!user) {
-    res.status(404).json({ message: `User not found with id: ${id}` });
-  } else {
-    res.json(user);
+  if (!rest.password || rest.password.length < 6) {
+    return res.status(400).json({ message: 'password must be greater than 5 characters' });
+  }
+
+  try {
+    const user = await updateUser(id, rest);
+    return res.json(user);
+  } catch (error) {
+    return res.status(500).json(error);
   }
 };
 
