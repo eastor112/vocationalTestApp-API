@@ -1,7 +1,10 @@
+const { ObjectId } = require('mongoose').Types;
 const User = require('../api/users/users.model');
 const Role = require('../commonModels/roles');
 const Billing = require('../api/billings/billings.model');
 const TestResults = require('../api/testResults/testResults.model');
+const Offers = require('../api/offers/offers.model');
+const University = require('../api/universities/universities.model');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -38,10 +41,45 @@ const testResultExistById = async (id) => {
   }
 };
 
+const offersExistById = async (id) => {
+  const offer = await Offers.findById(id);
+  if (!offer || !offer.state) {
+    throw new Error(`the offer with id ${id} doesn't exist`);
+  }
+};
+
+const isCareerMongoIdAndExistOrEmpty = async (id) => {
+  if (id) {
+    if (!ObjectId.isValid(id)) {
+      throw new Error(`the id ${id} is not a valid mongoId`);
+    }
+    // const user = await User.findById(id);
+    // if (!user || !user.state) {
+    //   throw new Error(`the user with id ${id} doesn't exist`);
+    // }
+  }
+};
+
+const isUniversityMongoIdAndExistOrEmpty = async (id) => {
+  if (id) {
+    if (!ObjectId.isValid(id)) {
+      throw new Error(`the id ${id} is not a valid mongoId`);
+    }
+    const university = await University.findById(id);
+
+    if (!university) {
+      throw new Error(`the university with id ${id} doesn't exist`);
+    }
+  }
+};
+
 module.exports = {
   isValidRole,
   userExistById,
   billingExistById,
   emailExist,
   testResultExistById,
+  offersExistById,
+  isCareerMongoIdAndExistOrEmpty,
+  isUniversityMongoIdAndExistOrEmpty,
 };
