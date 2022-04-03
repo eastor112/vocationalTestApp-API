@@ -5,6 +5,7 @@ const Billing = require('../api/billings/billings.model');
 const TestResults = require('../api/testResults/testResults.model');
 const Offers = require('../api/offers/offers.model');
 const University = require('../api/universities/universities.model');
+const Careers = require('../api/careers/careers.model');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -73,6 +74,13 @@ const isUniversityMongoIdAndExistOrEmpty = async (id) => {
   }
 };
 
+const careerExistById = async (id) => {
+  const career = await Careers.findById(id);
+  if (!career || !career.state) {
+    throw new Error(`the career with id ${id} doesn't exist`);
+  }
+};
+
 module.exports = {
   isValidRole,
   userExistById,
@@ -82,4 +90,5 @@ module.exports = {
   offersExistById,
   isCareerMongoIdAndExistOrEmpty,
   isUniversityMongoIdAndExistOrEmpty,
+  careerExistById,
 };

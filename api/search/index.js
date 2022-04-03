@@ -22,7 +22,9 @@ router.get('/users/:query', [
 router.get('/universities/:query', handlerUniversitiesSearch);
 
 router.get('/careers/:query', handlerCareersSearch);
-router.get('/offers/:query', handlerOffersSearch);
+
+router.get('/offers/:query', [], handlerOffersSearch);
+
 router.get('/questions/:query', handlerQuestionsSearch);
 router.get('/tests/:query', handlerTestsSearch);
 
@@ -30,6 +32,8 @@ router.get('/billings/:query', [
   validateJwtMw,
 ], handlerBillingsSearch);
 
-router.get('/results', handlerResultsSearch);
+router.get('/results', [
+  validateJwtMw,
+], handlerResultsSearch);
 
 module.exports = router;

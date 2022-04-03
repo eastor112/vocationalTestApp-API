@@ -6,10 +6,12 @@ const search = require('../api/search');
 const billings = require('../api/billings');
 const testResults = require('../api/testResults');
 const offers = require('../api/offers');
+const careers = require('../api/careers');
 
 function routes(app) {
   app.use('/api/users', users);
   app.use('/api/universities', universities);
+  app.use('/api/careers', careers);
   app.use('/api/billings', billings);
   app.use('/api/testresults', testResults);
   app.use('/api/search', search);

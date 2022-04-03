@@ -2,7 +2,8 @@ const { ObjectId } = require('mongoose').Types;
 const University = require('../universities/universities.model');
 const User = require('../users/users.model');
 const Billing = require('../billings/billings.model');
-const TestResults = require('../testResults/testResults.model');
+const Offers = require('../offers/offers.model');
+
 const {
   searchUsers,
   searchUniversities,
@@ -134,9 +135,40 @@ const handlerBillingsSearch = async (req, res) => {
 };
 
 const handlerOffersSearch = async (req, res) => {
+  const { limit = 5, page = 1 } = req.query;
   const { query } = req.params;
 
-  res.json({ msg: 'handlerOffersSearch' });
+  // search by offer id
+  if (ObjectId.isValid(query)) {
+    const offer = await Offers.findById(query);
+    return res.json({
+      totalDocs: offer ? 1 : 0,
+      currentPage: 1,
+      totalPages: 1,
+      results: offer ? [offer] : [],
+    });
+  }
+
+  const queryRegex = new RegExp(query, 'i');
+
+  // search by name
+  const criteria = ({ name: queryRegex, estate: true });
+
+  const { total, offers } = await Promise.all([
+    await Offers.countDocuments(criteria),
+    await Offers.find(criteria)
+      .limit(limit)
+      .skip(limit * (page - 1)),
+  ]);
+
+  return res.json({
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    results: offers,
+  });
+  // search by university id
+  // search by career id
 };
 
 const handlerResultsSearch = async (req, res) => {

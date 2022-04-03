@@ -74,6 +74,10 @@ const searchBilling = async (query, limit, page) => {
   return { total, billings };
 };
 
+const searchOffers = async (query, limit, page) => {
+
+};
+
 const searchResults = async (id, user, limit, page) => {
   if (id) {
     const result = await TestResults.findById(id)
