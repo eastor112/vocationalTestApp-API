@@ -6,7 +6,8 @@ const getAllOffers = async (limit, page) => {
     await Offers.find({ state: true })
       .limit(limit)
       .skip(limit * (page - 1))
-      .populate('university', 'name')]);
+      .populate('university', 'name')
+      .populate('career', 'name description')]);
 
   return { total, offers };
 };

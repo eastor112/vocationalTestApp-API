@@ -3,6 +3,7 @@ const University = require('../universities/universities.model');
 const User = require('../users/users.model');
 const Billing = require('../billings/billings.model');
 const Offers = require('../offers/offers.model');
+const Careers = require('../careers/careers.model');
 
 const {
   searchUsers,
@@ -64,9 +65,37 @@ const handlerUniversitiesSearch = async (req, res) => {
 };
 
 const handlerCareersSearch = async (req, res) => {
+  const { limit = 5, page = 1 } = req.query;
   const { query } = req.params;
 
-  res.json({ msg: 'handlerCareersSearch' });
+  // search  career by id
+  if (ObjectId.isValid(query)) {
+    const career = await Careers.findById(query);
+    return res.json({
+      totalDocs: career ? 1 : 0,
+      currentPage: 1,
+      totalPages: 1,
+      results: career ? [career] : [],
+    });
+  }
+
+  // search career by name
+  const queryRegex = new RegExp(query, 'i');
+  const criteria = ({ name: queryRegex, estate: true });
+
+  const [total, careers] = await Promise.all([
+    await Careers.countDocuments(criteria),
+    await Careers.find(criteria)
+      .limit(limit)
+      .skip(limit * (page - 1)),
+  ]);
+
+  return res.json({
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    results: careers,
+  });
 };
 
 const handlerQuestionsSearch = async (req, res) => {
@@ -135,8 +164,36 @@ const handlerBillingsSearch = async (req, res) => {
 };
 
 const handlerOffersSearch = async (req, res) => {
-  const { limit = 5, page = 1 } = req.query;
+  const { limit = 5, page = 1, university, career } = req.query;
   const { query } = req.params;
+  if (university) {
+    if (ObjectId.isValid(query)) {
+      const offer = await Offers.find({ university: { _id: query } })
+        .populate('university', 'name')
+        .populate('career', 'name');
+
+      return res.json({
+        totalDocs: offer ? 1 : 0,
+        currentPage: 1,
+        totalPages: 1,
+        results: offer ? [offer] : [],
+      });
+    }
+  }
+  if (career) {
+    if (ObjectId.isValid(query)) {
+      const offer = await Offers.find({ career: { _id: query } })
+        .populate('university', 'name')
+        .populate('career', 'name');
+
+      return res.json({
+        totalDocs: offer ? 1 : 0,
+        currentPage: 1,
+        totalPages: 1,
+        results: offer ? [offer] : [],
+      });
+    }
+  }
 
   // search by offer id
   if (ObjectId.isValid(query)) {
