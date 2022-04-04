@@ -1,113 +1,61 @@
 const { ObjectId } = require('mongoose').Types;
-const University = require('../universities/universities.model');
-const User = require('../users/users.model');
 const Billing = require('../billings/billings.model');
-const Offers = require('../offers/offers.model');
-const Careers = require('../careers/careers.model');
 
 const {
   searchUsers,
   searchUniversities,
   searchBilling,
   searchResults,
+  searchCareers,
+  searchOffers,
 } = require('./search.service');
 
 const handlerUsersSearch = async (req, res) => {
   const { query } = req.params;
   const { limit = 5, page = 1 } = req.query;
 
-  const isMongoId = ObjectId.isValid(query);
+  const users = await searchUsers(query, limit, page);
 
-  if (isMongoId) {
-    const user = await User.findById(query).populate('university', 'name');
-    return res.json({
-      totalDocs: user ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: user ? [user] : [],
-    });
-  }
-
-  const { total, users } = await searchUsers(query, limit, page);
-
-  return res.json({
-    totalDocs: total,
-    currentPage: Number(page),
-    totalPages: Math.ceil(total / limit),
-    results: users,
-  });
+  return res.json(users);
 };
 
 const handlerUniversitiesSearch = async (req, res) => {
   const { query } = req.params;
   const { limit = 5, page = 1 } = req.query;
 
-  const isMongoId = ObjectId.isValid(query);
+  const universities = await searchUniversities(query, limit, page);
 
-  if (isMongoId) {
-    const university = await University.findById(query);
-    return res.json({
-      totalDocs: university ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: university ? [university] : [],
-    });
-  }
-
-  const { total, universities } = await searchUniversities(query, limit, page);
-
-  return res.json({
-    totalDocs: total,
-    currentPage: Number(page),
-    totalPages: Math.ceil(total / limit),
-    results: universities,
-  });
+  return res.json(universities);
 };
 
 const handlerCareersSearch = async (req, res) => {
   const { limit = 5, page = 1 } = req.query;
   const { query } = req.params;
 
-  // search  career by id
-  if (ObjectId.isValid(query)) {
-    const career = await Careers.findById(query);
-    return res.json({
-      totalDocs: career ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: career ? [career] : [],
-    });
+  const careers = await searchCareers(query, limit, page);
+
+  return res.json(careers);
+};
+
+const handlerOffersSearch = async (req, res) => {
+  const { limit = 5, page = 1, target } = req.query;
+  const { query } = req.params;
+
+  const offers = await searchOffers(query, limit, page, target);
+
+  return res.json(offers);
+};
+
+const handlerResultsSearch = async (req, res) => {
+  const { limit = 5, page = 1, target } = req.query;
+  const { query } = req.params;
+  try {
+    const results = await searchResults(query, target, limit, page);
+
+    return res.json(results);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
   }
-
-  // search career by name
-  const queryRegex = new RegExp(query, 'i');
-  const criteria = ({ name: queryRegex, estate: true });
-
-  const [total, careers] = await Promise.all([
-    await Careers.countDocuments(criteria),
-    await Careers.find(criteria)
-      .limit(limit)
-      .skip(limit * (page - 1)),
-  ]);
-
-  return res.json({
-    totalDocs: total,
-    currentPage: Number(page),
-    totalPages: Math.ceil(total / limit),
-    results: careers,
-  });
-};
-
-const handlerQuestionsSearch = async (req, res) => {
-  const { query } = req.params;
-
-  res.json({ msg: 'handlerQuestionsSearch' });
-};
-
-const handlerTestsSearch = async (req, res) => {
-  const { query } = req.params;
-
-  res.json({ msg: 'handlerTestsSearch' });
 };
 
 const handlerBillingsSearch = async (req, res) => {
@@ -128,6 +76,7 @@ const handlerBillingsSearch = async (req, res) => {
         results: [billing],
       });
     }
+
     const total = await Billing.countDocuments({ user: { _id: query } });
     billing = await Billing.find({ user: { _id: query } })
       .limit(limit)
@@ -163,107 +112,16 @@ const handlerBillingsSearch = async (req, res) => {
   });
 };
 
-const handlerOffersSearch = async (req, res) => {
-  const { limit = 5, page = 1, university, career } = req.query;
+const handlerQuestionsSearch = async (req, res) => {
   const { query } = req.params;
-  if (university) {
-    if (ObjectId.isValid(query)) {
-      const offer = await Offers.find({ university: { _id: query } })
-        .populate('university', 'name')
-        .populate('career', 'name');
 
-      return res.json({
-        totalDocs: offer ? 1 : 0,
-        currentPage: 1,
-        totalPages: 1,
-        results: offer ? [offer] : [],
-      });
-    }
-  }
-  if (career) {
-    if (ObjectId.isValid(query)) {
-      const offer = await Offers.find({ career: { _id: query } })
-        .populate('university', 'name')
-        .populate('career', 'name');
-
-      return res.json({
-        totalDocs: offer ? 1 : 0,
-        currentPage: 1,
-        totalPages: 1,
-        results: offer ? [offer] : [],
-      });
-    }
-  }
-
-  // search by offer id
-  if (ObjectId.isValid(query)) {
-    const offer = await Offers.findById(query);
-    return res.json({
-      totalDocs: offer ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: offer ? [offer] : [],
-    });
-  }
-
-  const queryRegex = new RegExp(query, 'i');
-
-  // search by name
-  const criteria = ({ name: queryRegex, estate: true });
-
-  const { total, offers } = await Promise.all([
-    await Offers.countDocuments(criteria),
-    await Offers.find(criteria)
-      .limit(limit)
-      .skip(limit * (page - 1)),
-  ]);
-
-  return res.json({
-    totalDocs: total,
-    currentPage: Number(page),
-    totalPages: Math.ceil(total / limit),
-    results: offers,
-  });
-  // search by university id
-  // search by career id
+  res.json({ msg: 'handlerQuestionsSearch' });
 };
 
-const handlerResultsSearch = async (req, res) => {
-  const { id, user, limit = 5, page = 1 } = req.query;
+const handlerTestsSearch = async (req, res) => {
+  const { query } = req.params;
 
-  if (id && user) {
-    return res.status(400).json({
-      msg: 'Only one parameter \'id\' or \'user\' can be passed',
-    });
-  }
-
-  try {
-    if (ObjectId.isValid(id)) {
-      const result = await searchResults(id, user, limit, page);
-
-      return res.json({
-        totalDocs: result.length > 0 ? 1 : 0,
-        currentPage: 1,
-        totalPages: 1,
-        results: result,
-      });
-    }
-
-    if (ObjectId.isValid(user)) {
-      const { total, results } = await searchResults(id, user, limit, page);
-
-      return res.json({
-        totalDocs: total,
-        currentPage: Number(page),
-        totalPages: Math.ceil(total / limit),
-        results,
-      });
-    }
-
-    throw new Error('Invalid id or userId');
-  } catch (error) {
-    return res.status(400).json({ msg: error.message });
-  }
+  res.json({ msg: 'handlerTestsSearch' });
 };
 
 module.exports = {

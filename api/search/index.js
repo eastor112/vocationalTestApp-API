@@ -32,7 +32,7 @@ router.get('/billings/:query', [
   validateJwtMw,
 ], handlerBillingsSearch);
 
-router.get('/results', [
+router.get('/results/:query', [
   validateJwtMw,
 ], handlerResultsSearch);
 

@@ -41,4 +41,4 @@ OffersSchema.methods.toJSON = function () {
   return rest;
 };
 
-module.exports = mongoose.model('Offers', OffersSchema);
+module.exports = mongoose.model('Offer', OffersSchema);
