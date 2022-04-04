@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 
 const UniversitySchema = new mongoose.Schema({
-  id: Number,
-  name: String,
+  name: {
+    required: true,
+    type: String,
+  },
   logo: String,
   campus: Array,
   ranking: {
@@ -12,27 +14,30 @@ const UniversitySchema = new mongoose.Schema({
   mission: String,
   vision: String,
   process: Array,
-  location: {
+  address: {
+    country: String,
     city: String,
-    Department: String,
-    Country: String,
+    geo: {
+      lat: String,
+      lng: String,
+    },
   },
   offer: [{
-    code: Number,
-    career: String,
-    duration: String,
-    description: String,
-
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Offer',
+  }],
+  url: {
+    required: true,
+    type: String,
   },
-  {
-    code: Number,
-    career: String,
-    duration: String,
-    description: String,
-
+  state: {
+    type: Boolean,
+    default: true,
   },
-  ],
-  url: String,
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 module.exports = mongoose.model('University', UniversitySchema);
