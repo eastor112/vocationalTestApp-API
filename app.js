@@ -4,7 +4,7 @@ const express = require('express');
 
 const configExpress = require('./config/express');
 const connectDB = require('./config/database');
-const routes = require('./routes');
+const routes = require('./routes/routes');
 
 const app = express();
 
@@ -15,5 +15,6 @@ routes(app);
 const port = process.env.PORT || 8080;
 
 app.listen(port, () => {
+  // eslint-disable-next-line no-console
   console.log(`Server running at http://localhost:${port}/`);
 });

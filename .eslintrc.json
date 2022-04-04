@@ -39,6 +39,7 @@
     ],
     "no-unused-vars": "off",
     "func-names": "off",
-    "default-param-last": "off"
+    "default-param-last": "off",
+    "no-case-declarations": "off"
   }
 }
