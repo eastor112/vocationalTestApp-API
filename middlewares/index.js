@@ -1,4 +1,4 @@
-const fieldsValidator = require('./filedsValidator');
+const fieldsValidator = require('./fieldsValidator');
 const rolesValidator = require('./rolesValidator');
 const tokenValidator = require('./tokenValidator');
 
