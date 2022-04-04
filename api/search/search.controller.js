@@ -1,5 +1,4 @@
 const { ObjectId } = require('mongoose').Types;
-const Billing = require('../billings/billings.model');
 
 const {
   searchUsers,
@@ -59,57 +58,12 @@ const handlerResultsSearch = async (req, res) => {
 };
 
 const handlerBillingsSearch = async (req, res) => {
-  const { limit = 5, page = 1 } = req.query;
+  const { limit = 5, page = 1, target } = req.query;
   const { query } = req.params;
 
-  const isMongoId = ObjectId.isValid(query);
+  const results = await searchBilling(query, target, limit, page);
 
-  if (isMongoId) {
-    let billing = await Billing.findById(query)
-      .populate('user', 'names email');
-
-    if (billing) {
-      return res.json({
-        totalDocs: 1,
-        currentPage: 1,
-        totalPages: 1,
-        results: [billing],
-      });
-    }
-
-    const total = await Billing.countDocuments({ user: { _id: query } });
-    billing = await Billing.find({ user: { _id: query } })
-      .limit(limit)
-      .skip(limit * (page - 1))
-      .populate('user', 'names email');
-
-    return res.json({
-      totalDocs: total,
-      currentPage: Number(page),
-      totalPages: Math.ceil(total / limit),
-      results: billing,
-    });
-  }
-
-  if (!Number.isNaN(Number(query))) {
-    const billing = await Billing.find({ transactionNumber: Number(query) })
-      .populate('user', 'names email');
-    return res.json({
-      totalDocs: billing ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: billing,
-    });
-  }
-
-  const { total, billings } = await searchBilling(query, limit, page);
-
-  return res.json({
-    totalDocs: total,
-    currentPage: Number(page),
-    totalPages: Math.ceil(total / limit),
-    results: billings,
-  });
+  return res.json(results);
 };
 
 const handlerQuestionsSearch = async (req, res) => {

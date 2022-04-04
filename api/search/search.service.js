@@ -300,7 +300,52 @@ const searchResults = async (query, target, limit, page) => {
   throw new Error(`${query} is not a valid MongoId`);
 };
 
-const searchBilling = async (query, limit, page) => {
+const searchBilling = async (query, target, limit, page) => {
+  const isMongoId = ObjectId.isValid(query);
+
+  if (isMongoId) {
+    if (!target) {
+      const billing = await Billing.findOne({ _id: query, state: true })
+        .populate('user', 'names email');
+
+      return {
+        totalDocs: billing ? 1 : 0,
+        currentPage: 1,
+        totalPages: 1,
+        results: billing ? [billing] : [],
+      };
+    }
+
+    if (target === 'user') {
+      const [total, billing] = await Promise.all([
+        await Billing.countDocuments({ user: { _id: query }, state: true }),
+        await Billing.find({ user: { _id: query }, state: true })
+          .limit(limit)
+          .skip(limit * (page - 1))
+          .populate('user', 'names email'),
+      ]);
+
+      return {
+        totalDocs: total,
+        currentPage: Number(page),
+        totalPages: Math.ceil(total / limit),
+        results: billing,
+      };
+    }
+  }
+
+  if (!Number.isNaN(Number(query))) {
+    const billing = await Billing.find({ transactionNumber: Number(query), state: true })
+      .populate('user', 'names email');
+
+    return {
+      totalDocs: billing ? 1 : 0,
+      currentPage: 1,
+      totalPages: 1,
+      results: billing ? [billing] : [],
+    };
+  }
+
   const queryRegex = new RegExp(query, 'i');
 
   const criteria = {
@@ -311,14 +356,19 @@ const searchBilling = async (query, limit, page) => {
   };
 
   const [total, billings] = await Promise.all([
-    Billing.countDocuments(criteria),
-    Billing.find(criteria)
+    await Billing.countDocuments(criteria),
+    await Billing.find(criteria)
       .limit(limit)
       .skip(limit * (page - 1))
       .populate('user', 'names email'),
   ]);
 
-  return { total, billings };
+  return {
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    results: billings,
+  };
 };
 
 module.exports = {
