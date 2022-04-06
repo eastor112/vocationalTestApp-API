@@ -17,55 +17,55 @@ const isValidRole = async (rol = '') => {
 };
 
 const userExistById = async (id) => {
-  const user = await User.findById(id);
-  if (!user || !user.state) {
+  const user = await User.findOne({ _id: id, state: true });
+  if (!user) {
     throw new Error(`the user with id ${id} doesn't exist`);
   }
 };
 
 const emailExist = async (email = '') => {
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email, state: true });
   if (user) {
     throw new Error(`the email ${email} is already registered`);
   }
 };
 const universityExistById = async (id) => {
-  const university = await University.findById(id);
-  if (!university || !university.state) {
+  const university = await University.findOne({ _id: id, state: true });
+  if (!university) {
     throw new Error(`the university with id ${id} doesn't exist`);
   }
 };
 
 const questionExistsById = async (id) => {
-  const question = await Question.findById(id);
+  const question = await Question.findOne({ _id: id, state: true });
   if (!question) {
     throw new Error(`the question with id ${id} doesn't exist`);
   }
 };
 
 const vocationalTestExistsById = async (id) => {
-  const vocationalTest = await VocationalTest.findById(id);
-  if (!vocationalTest || !vocationalTest.state) {
+  const vocationalTest = await VocationalTest.findOne({ _id: id, state: true });
+  if (!vocationalTest) {
     throw new Error(`the vocationalTest with id ${id} doesn't exist`);
   }
 };
 
 const billingExistById = async (id) => {
-  const billing = await Billing.findById(id);
-  if (!billing || !billing.state) {
+  const billing = await Billing.findOne({ _id: id, state: true });
+  if (!billing) {
     throw new Error(`the billing with id ${id} doesn't exist`);
   }
 };
 
 const testResultExistById = async (id) => {
-  const testResults = await TestResults.findById(id);
-  if (!testResults || !testResults.state) {
+  const testResults = await TestResults.findOne({ _id: id, state: true });
+  if (!testResults) {
     throw new Error(`the testResults with id ${id} doesn't exist`);
   }
 };
 
 const offersExistById = async (id) => {
-  const offer = await Offers.findById(id);
+  const offer = await Offers.findOne({ _id: id, state: true });
   if (!offer || !offer.state) {
     throw new Error(`the offer with id ${id} doesn't exist`);
   }
@@ -97,7 +97,7 @@ const isUniversityMongoIdAndExistOrEmpty = async (id) => {
 };
 
 const careerExistById = async (id) => {
-  const career = await Careers.findById(id);
+  const career = await Careers.findOne({ _id: id, state: true });
   if (!career || !career.state) {
     throw new Error(`the career with id ${id} doesn't exist`);
   }

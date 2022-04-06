@@ -4,7 +4,6 @@ const QuestionSchema = new mongoose.Schema({
   test: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Test',
-    required: true,
   },
   type: {
     type: String,
@@ -33,6 +32,14 @@ const QuestionSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+QuestionSchema.methods.toJSON = function () {
+  const question = this;
+  const { _id, state, __v, ...rest } = question.toObject();
+  rest.id = _id;
+
+  return rest;
+};
 
 QuestionSchema.methods.toJSON = function () {
   const question = this;

@@ -26,7 +26,7 @@ const handlerGetOneTest = async (req, res) => {
 };
 
 const handlerCreateTest = async (req, res) => {
-  const { _id, state, updatedAt, createdAt, ...rest } = req.body;
+  const { _id, __v, state, updatedAt, createdAt, ...rest } = req.body;
 
   try {
     const test = await createTest(rest);

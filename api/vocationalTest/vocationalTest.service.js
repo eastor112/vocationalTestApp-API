@@ -27,7 +27,7 @@ const createTest = async (rest) => {
 };
 
 const updateTest = async (id, rest) => {
-  const test = await VocationalTest.findByOneAndUpdate(
+  const test = await VocationalTest.findOneAndUpdate(
     { _id: id, state: true },
     rest,
     { new: true },

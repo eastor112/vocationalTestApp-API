@@ -19,9 +19,10 @@ const TestSchema = new mongoose.Schema({
 });
 
 TestSchema.methods.toJSON = function () {
-  const testTable = this;
-  const { _id, state, __v, ...rest } = testTable.toObject();
+  const test = this;
+  const { _id, state, __v, ...rest } = test.toObject();
   rest.id = _id;
+
   return rest;
 };
 
