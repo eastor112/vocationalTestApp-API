@@ -8,13 +8,13 @@ const routes = require('./routes/routes');
 
 const app = express();
 
-connectDB();
+const env = process.env.NODE_ENV;
+
+if (env !== 'test') {
+  connectDB();
+}
+
 configExpress(app);
 routes(app);
 
-const port = process.env.PORT || 8080;
-
-app.listen(port, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Server running at http://localhost:${port}/`);
-});
+module.exports = app;
