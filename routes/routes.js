@@ -16,7 +16,7 @@ function routes(app) {
   app.use('/api/universities', universities);
   app.use('/api/users', users);
   app.use('/api/questions', questions);
-  app.use('/api/vocationalTest', vocationalTest);
+  app.use('/api/tests', vocationalTest);
   app.use('/api/testresults', testResults);
   app.use('/api/billings', billings);
   app.use('/api/search', search);

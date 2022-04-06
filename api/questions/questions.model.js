@@ -1,13 +1,45 @@
 const mongoose = require('mongoose');
 
 const QuestionSchema = new mongoose.Schema({
-  idTest: Number,
-  type: String,
-  statement: String,
-  optionA: String,
-  optionB: String,
-  optionC: String,
-  optionD: String,
+  test: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Test',
+    required: true,
+  },
+  type: {
+    type: String,
+    enum: ['BINARI', 'MULTIPLE'],
+  },
+  statement: {
+    type: String,
+    required: true,
+  },
+  optionA: {
+    type: String,
+  },
+  optionB: {
+    type: String,
+  },
+  optionC: {
+    type: String,
+  },
+  optionD: {
+    type: String,
+  },
+  state: {
+    type: Boolean,
+    default: true,
+  },
+}, {
+  timestamps: true,
 });
+
+QuestionSchema.methods.toJSON = function () {
+  const question = this;
+  const { _id, state, __v, ...rest } = question.toObject();
+  rest.id = _id;
+
+  return rest;
+};
 
 module.exports = mongoose.model('Question', QuestionSchema);

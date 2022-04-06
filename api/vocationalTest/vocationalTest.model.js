@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
-const TestsTableSchema = new mongoose.Schema({
+const TestSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
   },
-  type: String,
+  type: {
+    type: String,
+    enum: ['SURVEY', 'VOCATIONAL'],
+    default: 'VOCATIONAL',
+  },
   state: {
     type: Boolean,
     default: true,
@@ -14,11 +18,11 @@ const TestsTableSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-TestsTableSchema.methods.toJSON = function () {
+TestSchema.methods.toJSON = function () {
   const testTable = this;
-  const { _id, state, ...rest } = testTable.toObject();
+  const { _id, state, __v, ...rest } = testTable.toObject();
   rest.id = _id;
   return rest;
 };
 
-module.exports = mongoose.model('TestsTable', TestsTableSchema);
+module.exports = mongoose.model('Test', TestSchema);
