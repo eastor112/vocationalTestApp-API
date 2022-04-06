@@ -6,14 +6,14 @@ const UniversitySchema = new mongoose.Schema({
     type: String,
   },
   logo: String,
-  campus: Array,
+  campus: [String],
   ranking: {
     national: Number,
     worldwide: Number,
   },
   mission: String,
   vision: String,
-  process: Array,
+  process: [String],
   address: {
     country: String,
     city: String,
@@ -27,17 +27,22 @@ const UniversitySchema = new mongoose.Schema({
     ref: 'Offer',
   }],
   url: {
-    required: true,
     type: String,
   },
   state: {
     type: Boolean,
     default: true,
   },
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
+}, {
+  timestamps: true,
 });
+
+UniversitySchema.methods.toJSON = function () {
+  const university = this;
+  const { _id, state, __v, ...rest } = university.toObject();
+  rest.id = _id;
+
+  return rest;
+};
 
 module.exports = mongoose.model('University', UniversitySchema);

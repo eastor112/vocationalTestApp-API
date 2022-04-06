@@ -75,7 +75,8 @@ const searchUniversities = async (query, limit, page) => {
   const isMongoId = ObjectId.isValid(query);
 
   if (isMongoId) {
-    const university = await University.findOne(query);
+    const university = await University.findOne({ _id: query, state: true });
+
     return {
       totalDocs: university ? 1 : 0,
       currentPage: 1,
@@ -91,7 +92,7 @@ const searchUniversities = async (query, limit, page) => {
       { name: queryRegex },
       { 'location.city': queryRegex },
       { 'location.Country': queryRegex },
-      { 'offer.career': queryRegex }],
+      { 'offer.name': queryRegex }],
     $and: [{ state: true }],
   };
 
@@ -99,7 +100,8 @@ const searchUniversities = async (query, limit, page) => {
     University.countDocuments(criteria),
     University.find(criteria)
       .limit(limit)
-      .skip(limit * (page - 1)),
+      .skip(limit * (page - 1))
+      .populate('offer', 'name'),
   ]);
 
   return {
