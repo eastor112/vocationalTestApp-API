@@ -7,36 +7,61 @@ const {
 } = require('./universities.service');
 
 const handlerAllUniversities = async (req, res) => {
-  const universities = await getAllUniversities();
-  res.json(universities);
+  const { limit = 5, page = 1 } = req.query;
+
+  try {
+    const universities = await getAllUniversities(limit, page);
+    res.json(universities);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error getting universities' });
+  }
 };
 
 const handlerOneUniversity = async (req, res) => {
   const { id } = req.params;
-  const university = await getOneUniversity(id);
-  res.json(university);
+
+  try {
+    const university = await getOneUniversity(id);
+
+    res.json(university);
+  } catch (error) {
+    res.status(500).json({ msg: 'Error getting university' });
+  }
 };
 
 const handlerDeleteUniversity = async (req, res) => {
   const { id } = req.params;
-  const university = await getOneUniversity(id);
-  deleteUniversity(id);
-  res.json({ msg: 'University deleted' });
+  try {
+    await deleteUniversity(id);
+
+    res.status(204).json({ msg: 'University deleted' });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error deleting university' });
+  }
 };
 
 const handlerCreateUniversity = async (req, res) => {
-  const newUniversity = await createUniversity(req.body);
-  return res.status(201).json(newUniversity);
+  const { _id, state, createdAt, updatedAp, __v, ...rest } = req.body;
+
+  try {
+    const newUniversity = await createUniversity(rest);
+
+    return res.status(201).json(newUniversity);
+  } catch (error) {
+    return res.status(500).json({ msg: 'Error creating university' });
+  }
 };
 
 const handlerUpdateUniversity = async (req, res) => {
   const { id } = req.params;
-  const university = await updateUniversity(id, req.body);
+  const { _id, state, createdAt, updatedAp, __v, ...rest } = req.body;
 
-  if (!university) {
-    res.status(404).json({ message: `University not found with id: ${id}` });
-  } else {
-    res.json(university);
+  try {
+    const university = await updateUniversity(id, rest);
+
+    return res.json(university);
+  } catch (error) {
+    return res.status(500).json({ msg: 'Error updating university' });
   }
 };
 

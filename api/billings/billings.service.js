@@ -11,7 +11,9 @@ const getAllBillings = async (limit, page) => {
       .populate('user', 'names email')]);
 
   return {
-    total,
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
     billings,
   };
 };
@@ -20,15 +22,12 @@ const getOneBilling = async (id) => {
   const billing = await Billing.findById(id)
     .populate('user', 'names email');
 
-  if (!billing || !billing.state) {
-    return null;
-  }
-
   return billing;
 };
 
 const createBilling = async (newBilling) => {
-  const billing = await Billing.create(newBilling);
+  const billing = await Billing.create(newBilling)
+    .populate('user', 'names email');
   return billing;
 };
 
@@ -40,7 +39,8 @@ const updateBilling = async (id, newData) => {
 };
 
 const deleteBilling = async (id) => {
-  const billing = await Billing.findByIdAndUpdate(id, { state: false }, { new: true });
+  const billing = await Billing.findByIdAndUpdate(id, { state: false }, { new: true })
+    .populate('user', 'names email');
   return billing;
 };
 

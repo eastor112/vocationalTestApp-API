@@ -3,6 +3,7 @@ const { check } = require('express-validator');
 const { vocationalTestExistsById } = require('../../helpers/customValidators');
 const { fieldsValidatorMw } = require('../../middlewares/fieldsValidator');
 const { validateJwtMw } = require('../../middlewares/tokenValidator');
+const { isAdminRoleMw } = require('../../middlewares');
 
 const {
   handlerGetAllTests,
@@ -13,38 +14,36 @@ const {
 } = require('./vocationalTest.controller');
 
 const router = Router();
-router.get('/', handlerGetAllTests);
-router.get(
-  '/:id',
-  [
-    check('id', 'id is not valid').isMongoId(),
-    check('id').custom(vocationalTestExistsById),
-    fieldsValidatorMw,
-  ],
-  handlerGetOneTest,
-);
-router.post(
-  '/',
-  [
-    validateJwtMw,
-  ],
-  handlerCreateTest,
-);
-router.patch(
-  '/:id',
-  [
-    check('id', 'id is not valid').isMongoId(),
-    check('id').custom(vocationalTestExistsById),
-    fieldsValidatorMw,
-  ],
-  handlerUpdateTest,
-);
-router.delete(
-  '/:id',
-  [check('id', 'id is not valid').isMongoId(),
-    check('id').custom(vocationalTestExistsById),
-    fieldsValidatorMw],
-  handlerDeleteTest,
-);
+router.get('/', [
+  validateJwtMw,
+], handlerGetAllTests);
+
+router.get('/:id', [
+  validateJwtMw,
+  check('id', 'id is not valid').isMongoId(),
+  check('id').custom(vocationalTestExistsById),
+  fieldsValidatorMw,
+], handlerGetOneTest);
+
+router.post('/', [
+  validateJwtMw,
+  isAdminRoleMw,
+], handlerCreateTest);
+
+router.patch('/:id', [
+  validateJwtMw,
+  isAdminRoleMw,
+  check('id', 'id is not valid').isMongoId(),
+  check('id').custom(vocationalTestExistsById),
+  fieldsValidatorMw,
+], handlerUpdateTest);
+
+router.delete('/:id', [
+  validateJwtMw,
+  isAdminRoleMw,
+  check('id', 'id is not valid').isMongoId(),
+  check('id').custom(vocationalTestExistsById),
+  fieldsValidatorMw,
+], handlerDeleteTest);
 
 module.exports = router;

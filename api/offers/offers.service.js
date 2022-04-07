@@ -2,18 +2,25 @@ const Offers = require('./offers.model');
 
 const getAllOffers = async (limit, page) => {
   const [total, offers] = await Promise.all([
-    await Offers.countDocuments({ state: true }),
-    await Offers.find({ state: true })
+    Offers.countDocuments({ state: true }),
+    Offers.find({ state: true })
       .limit(limit)
       .skip(limit * (page - 1))
       .populate('university', 'name')
       .populate('career', 'name description')]);
 
-  return { total, offers };
+  return {
+    totalDocs: total,
+    totalPages: Math.ceil(total / limit),
+    currentPage: Number(page),
+    offers,
+  };
 };
 
 const getOneOffer = async (id) => {
-  const offer = await Offers.findById(id).populate('university', 'name');
+  const offer = await Offers.findById(id)
+    .populate('university', 'name')
+    .populate('career', 'name description');
 
   return offer;
 };
@@ -25,12 +32,16 @@ const createOffer = async (data) => {
 };
 
 const updateOffer = async (id, data) => {
-  const offer = await Offers.findByIdAndUpdate(id, data, { new: true });
+  const offer = await Offers.findByIdAndUpdate(id, data, { new: true })
+    .populate('university', 'name')
+    .populate('career', 'name description');
 
   return offer;
 };
 const deleteOffer = async (id) => {
-  const offer = await Offers.findByIdAndUpdate(id, { state: false });
+  const offer = await Offers.findByIdAndUpdate(id, { state: false })
+    .populate('university', 'name')
+    .populate('career', 'name description');
 
   return offer;
 };

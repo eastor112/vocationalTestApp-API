@@ -2,6 +2,7 @@ const { Router } = require('express');
 const { check } = require('express-validator');
 const { universityExistById } = require('../../helpers/customValidators');
 const { fieldsValidatorMw } = require('../../middlewares/fieldsValidator');
+const { validateJwtMw } = require('../../middlewares/tokenValidator');
 
 const {
   handlerAllUniversities,
@@ -22,20 +23,22 @@ router.get('/:id', [
 ], handlerOneUniversity);
 
 router.delete('/:id', [
+  validateJwtMw,
   check('id', 'is not a valid id').isMongoId(),
-  fieldsValidatorMw], handlerDeleteUniversity);
+  check('id').custom(universityExistById),
+  fieldsValidatorMw,
+], handlerDeleteUniversity);
 
 router.post('/', [
   check('name').not().isEmpty().withMessage('Name is required'),
-  check('url').not().isEmpty().withMessage('URL is required'), fieldsValidatorMw], handlerCreateUniversity);
+  fieldsValidatorMw,
+], handlerCreateUniversity);
 
-router.patch(
-  '/:id',
-  [
-    check('id', 'is not a valid id').isMongoId(),
-    check('id').custom(universityExistById),
-    fieldsValidatorMw],
-  handlerUpdateUniversity,
-);
+router.patch('/:id', [
+  validateJwtMw,
+  check('id', 'is not a valid id').isMongoId(),
+  check('id').custom(universityExistById),
+  fieldsValidatorMw,
+], handlerUpdateUniversity);
 
 module.exports = router;

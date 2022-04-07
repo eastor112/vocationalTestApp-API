@@ -1,33 +1,47 @@
 const TestResults = require('./testResults.model');
 
 const getAllTestResults = async (limit, page) => {
-  const total = await TestResults.countDocuments({ state: true });
-  const testResults = await TestResults.find({ state: true })
-    .limit(limit)
-    .skip(limit * (page - 1))
-    .populate('user', 'names email');
+  const [total, testResults] = await Promise.all([
+    TestResults.countDocuments({ state: true }),
+    TestResults.find({ state: true })
+      .limit(limit)
+      .skip(limit * (page - 1))
+      .populate('user', 'names email')
+      .populate('test', 'name description')
+      .populate('careers', 'name description'),
+  ]);
 
   return {
-    total,
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
     testResults,
   };
 };
 
 const getOneTestResults = async (id) => {
-  const testResult = await TestResults.findOne({ _id: id, state: true })
-    .populate('user', 'names email');
+  const testResult = await TestResults.findById(id)
+    .populate('user', 'names email')
+    .populate('test', 'name description')
+    .populate('careers', 'name description');
 
   return testResult;
 };
 
 const createTestResults = async (data) => {
-  const testResut = await TestResults.create(data);
+  const testResut = await TestResults.create(data)
+    .populate('user', 'names email')
+    .populate('test', 'name description')
+    .populate('careers', 'name description');
 
   return testResut;
 };
 
 const updateTestResults = async (id, data) => {
-  const testResult = await TestResults.findOneAndUpdate({ _id: id }, data, { new: true });
+  const testResult = await TestResults.findOneAndUpdate({ _id: id }, data, { new: true })
+    .populate('user', 'names email')
+    .populate('test', 'name description')
+    .populate('careers', 'name description');
 
   return testResult;
 };
@@ -38,6 +52,7 @@ const deleteTestResults = async (id) => {
     { state: false },
     { new: true },
   );
+
   return testResult;
 };
 

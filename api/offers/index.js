@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check, body, sanitizeBody } = require('express-validator');
 const { offersExistById, isCareerMongoIdAndExistOrEmpty, isUniversityMongoIdAndExistOrEmpty } = require('../../helpers/customValidators');
-const { fieldsValidatorMw } = require('../../middlewares/filedsValidator');
+const { fieldsValidatorMw } = require('../../middlewares/fieldsValidator');
 const { validateJwtMw } = require('../../middlewares/tokenValidator');
 const {
   handlerGetAllOffers,
