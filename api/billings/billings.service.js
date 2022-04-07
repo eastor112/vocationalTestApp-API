@@ -26,8 +26,8 @@ const getOneBilling = async (id) => {
 };
 
 const createBilling = async (newBilling) => {
-  const billing = await Billing.create(newBilling)
-    .populate('user', 'names email');
+  const billing = await Billing.create(newBilling);
+
   return billing;
 };
 

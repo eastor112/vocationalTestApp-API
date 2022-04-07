@@ -7,7 +7,7 @@ const handlerLogin = async (req, res) => {
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(400).json({
-      message: 'Email or password is incorrect',
+      msg: 'Email or password is incorrect - user',
     });
   }
 
@@ -15,13 +15,13 @@ const handlerLogin = async (req, res) => {
 
   if (!isCorrectPassword) {
     return res.status(400).json({
-      message: 'Email or password is incorrect',
+      msg: 'Email or password is incorrect - password',
     });
   }
 
   if (!user.state) {
     return res.status(400).json({
-      msg: 'Email or password is incorrect ',
+      msg: 'Email or password is incorrect - state',
     });
   }
 
@@ -34,7 +34,7 @@ const handlerLogin = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({
-      message: 'Something went wrong with token',
+      msg: 'Something went wrong with token',
     });
   }
 };

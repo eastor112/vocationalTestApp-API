@@ -22,10 +22,6 @@ const getOneUser = async (id) => {
   const task = await User.findById(id)
     .populate('university', 'name');
 
-  if (!task) {
-    return null;
-  }
-
   return task;
 };
 
@@ -36,8 +32,7 @@ const deleteUser = async (id) => {
 };
 
 const createUser = async (user) => {
-  const newUser = await User.create(user)
-    .populate('university', 'name');
+  const newUser = await User.create(user);
 
   return newUser;
 };

@@ -16,6 +16,15 @@ const isValidRole = async (rol = '') => {
   }
 };
 
+const isValidRoleOrEmpty = async (rol) => {
+  if (rol) {
+    const role = await Role.findOne({ rol });
+    if (!role) {
+      throw new Error(`the role ${rol} doesn't exist`);
+    }
+  }
+};
+
 const userExistById = async (id) => {
   const user = await User.findOne({ _id: id, state: true });
   if (!user) {
@@ -117,4 +126,5 @@ module.exports = {
   universityExistById,
   questionExistsById,
   vocationalTestExistsById,
+  isValidRoleOrEmpty,
 };

@@ -31,8 +31,7 @@ async function deleteQuestion(id) {
 }
 
 async function createQuestion(newQuestion) {
-  const question = await QuestionsModel.create(newQuestion)
-    .populate('test', 'title type');
+  const question = await QuestionsModel.create(newQuestion);
 
   return question;
 }
