@@ -9,14 +9,9 @@ const {
 const handlerGetAllOffers = async (req, res) => {
   const { limit = 5, page = 1 } = req.query;
   try {
-    const { total, offers } = await getAllOffers(limit, page);
+    const offers = await getAllOffers(limit, page);
 
-    return res.json({
-      totalDocs: total,
-      totalPages: Math.ceil(total / limit),
-      currentPage: Number(page),
-      offers,
-    });
+    return res.json(offers);
   } catch (error) {
     return res.status(500).json({ msg: 'Error getting offers' });
   }
@@ -27,9 +22,6 @@ const handlerGetOneOffer = async (req, res) => {
 
   try {
     const offer = await getOneOffer(id);
-    if (!offer.state) {
-      return res.status(404).json({ msg: `Offer not found with id: ${id}` });
-    }
 
     return res.json(offer);
   } catch (error) {
@@ -38,7 +30,7 @@ const handlerGetOneOffer = async (req, res) => {
 };
 
 const handlerCreateOffer = async (req, res) => {
-  const { _id, state, createdAt, updateAt, ...rest } = req.body;
+  const { _id, __v, state, createdAt, updateAt, ...rest } = req.body;
 
   try {
     const offer = await createOffer(rest);
@@ -51,7 +43,7 @@ const handlerCreateOffer = async (req, res) => {
 
 const handlerUpdateOffer = async (req, res) => {
   const { id } = req.params;
-  const { _id, state, createdAt, updateAt, ...rest } = req.body;
+  const { _id, __v, state, createdAt, updateAt, ...rest } = req.body;
 
   try {
     const offer = await updateOffer(id, rest);
@@ -67,7 +59,7 @@ const handlerDeleteOffer = async (req, res) => {
   try {
     const offer = await deleteOffer(id);
 
-    return res.json({
+    return res.status(204).json({
       msg: `Offer ${offer.name} was deleted`,
     });
   } catch (error) {

@@ -4,14 +4,9 @@ const handlerGetAllCareers = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
 
   try {
-    const { total, careers } = await getAllCareers(limit, page);
+    const careers = await getAllCareers(limit, page);
 
-    res.json({
-      totalDocs: total,
-      currentPage: Number(page),
-      totalPages: Math.ceil(total / limit),
-      careers,
-    });
+    res.json(careers);
   } catch (error) {
     res.status(500).json({ msg: 'Error getting careers' });
   }
@@ -34,12 +29,12 @@ const handlerGetOneCareer = async (req, res) => {
 };
 
 const handlerCreateCareer = async (req, res) => {
-  const { _id, state, updatedAt, createdAt, ...rest } = req.body;
+  const { _id, state, __v, updatedAt, createdAt, ...rest } = req.body;
 
   try {
     const career = await createCareer(rest);
 
-    res.json(career);
+    res.status(201).json(career);
   } catch (error) {
     res.status(500).json({ msg: 'Error creating career' });
   }
@@ -47,7 +42,7 @@ const handlerCreateCareer = async (req, res) => {
 
 const handlerUpdateCareer = async (req, res) => {
   const { id } = req.params;
-  const { _id, state, updatedAt, createdAt, ...rest } = req.body;
+  const { _id, state, __v, updatedAt, createdAt, ...rest } = req.body;
 
   try {
     const career = await updateCareer(id, rest);
@@ -63,7 +58,7 @@ const handlerDeleteCareer = async (req, res) => {
   try {
     await deleteCareer(id);
 
-    return res.json({ msg: `Career deleted with id${id}` });
+    return res.status(204).json({ msg: `Career deleted with id${id}` });
   } catch (error) {
     return res.status(500).json({ msg: 'Error deleting career' });
   }

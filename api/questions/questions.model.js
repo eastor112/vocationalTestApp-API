@@ -41,12 +41,4 @@ QuestionSchema.methods.toJSON = function () {
   return rest;
 };
 
-QuestionSchema.methods.toJSON = function () {
-  const question = this;
-  const { _id, state, __v, ...rest } = question.toObject();
-  rest.id = _id;
-
-  return rest;
-};
-
 module.exports = mongoose.model('Question', QuestionSchema);

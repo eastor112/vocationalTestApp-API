@@ -66,7 +66,7 @@ const testResultExistById = async (id) => {
 
 const offersExistById = async (id) => {
   const offer = await Offers.findOne({ _id: id, state: true });
-  if (!offer || !offer.state) {
+  if (!offer) {
     throw new Error(`the offer with id ${id} doesn't exist`);
   }
 };
@@ -76,10 +76,11 @@ const isCareerMongoIdAndExistOrEmpty = async (id) => {
     if (!ObjectId.isValid(id)) {
       throw new Error(`the id ${id} is not a valid mongoId`);
     }
-    // const user = await User.findById(id);
-    // if (!user || !user.state) {
-    //   throw new Error(`the user with id ${id} doesn't exist`);
-    // }
+    const career = await Careers.findById(id);
+
+    if (!career || !career.state) {
+      throw new Error(`the career with id ${id} doesn't exist`);
+    }
   }
 };
 

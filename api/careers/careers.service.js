@@ -2,13 +2,18 @@ const Careers = require('./careers.model');
 
 const getAllCareers = async (limit, page) => {
   const [total, careers] = await Promise.all([
-    await Careers.countDocuments({ state: true }),
-    await Careers.find({ state: true })
+    Careers.countDocuments({ state: true }),
+    Careers.find({ state: true })
       .limit(limit)
       .skip((page - 1) * limit),
   ]);
 
-  return { total, careers };
+  return {
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    careers,
+  };
 };
 
 const getOneCareer = async (id) => {

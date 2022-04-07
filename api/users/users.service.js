@@ -4,14 +4,23 @@ const getAllUsers = async (limit, page) => {
   const query = { state: true };
 
   const [total, users] = await Promise.all([
-    await User.countDocuments(query),
-    await User.find(query).limit(limit).skip(limit * (page - 1)),
+    User.countDocuments(query),
+    User.find(query)
+      .limit(limit)
+      .skip(limit * (page - 1))
+      .populate('university', 'name'),
   ]);
-  return { total, users };
+  return {
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    users,
+  };
 };
 
 const getOneUser = async (id) => {
-  const task = await User.findById(id);
+  const task = await User.findById(id)
+    .populate('university', 'name');
 
   if (!task) {
     return null;
@@ -27,12 +36,16 @@ const deleteUser = async (id) => {
 };
 
 const createUser = async (user) => {
-  const newUser = await User.create(user);
+  const newUser = await User.create(user)
+    .populate('university', 'name');
+
   return newUser;
 };
 
 const updateUser = async (id, user) => {
-  const updatedUser = await User.findByIdAndUpdate(id, user, { new: true });
+  const updatedUser = await User.findByIdAndUpdate(id, user, { new: true })
+    .populate('university', 'name');
+
   return updatedUser;
 };
 

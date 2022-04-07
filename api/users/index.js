@@ -41,6 +41,7 @@ router.delete('/:id', [
 router.post('/', [
   check('email', 'email is not valid').isEmail(),
   check('email').custom(emailExist),
+  check('password', 'pasword is required').exists(),
   check('password', 'password must be greater than 5 characters').isLength({ min: 6 }),
   check('role').custom(isValidRole),
   fieldsValidatorMw,

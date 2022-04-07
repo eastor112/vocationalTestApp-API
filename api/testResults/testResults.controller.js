@@ -4,14 +4,9 @@ const handlerGetAllTestResults = async (req, res) => {
   const { limit = 5, page = 1 } = req.query;
 
   try {
-    const { total, testResults } = await getAllTestResults(limit, page);
+    const testResults = await getAllTestResults(limit, page);
 
-    return res.json({
-      totalDocs: total,
-      currentPage: page,
-      totalPages: Math.ceil(total / limit),
-      testResults,
-    });
+    return res.json(testResults);
   } catch (error) {
     return res.status(500).json({
       msg: 'Error getting TestResults',
@@ -39,7 +34,7 @@ const handlerGetOneTestResults = async (req, res) => {
 };
 
 const handlerCreateTestResults = async (req, res) => {
-  const { _id, state, createdAt, updatedAt, ...rest } = req.body;
+  const { _id, __v, state, createdAt, updatedAt, ...rest } = req.body;
 
   try {
     const testResult = await createTestResults(rest);
@@ -54,7 +49,7 @@ const handlerCreateTestResults = async (req, res) => {
 
 const handlerUpdateTestResults = async (req, res) => {
   const { id } = req.params;
-  const { _id, state, createdAt, updatedAt, ...rest } = req.body;
+  const { _id, __v, state, createdAt, updatedAt, ...rest } = req.body;
 
   try {
     const testResult = await updateTestResults(id, rest);
@@ -69,9 +64,11 @@ const handlerUpdateTestResults = async (req, res) => {
 
 const handlerDeleteTestResults = async (req, res) => {
   const { id } = req.params;
+
   try {
-    const testResult = await deleteTestResults(id);
-    return res.json({ msg: `TestResult with id: ${id} was deleted ` });
+    await deleteTestResults(id);
+
+    return res.status(204).json({ msg: `TestResult with id: ${id} was deleted ` });
   } catch (error) {
     return res.status(500).json({
       msg: 'Error deleting TestResult',
