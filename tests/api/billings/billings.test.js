@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const app = require('../../../app');
 const connectDB = require('../../../config/database');
 const Billings = require('../../../api/billings/billings.model');
+const Users = require('../../../api/users/users.model');
 
 const request = supertest(app);
 
@@ -48,6 +49,7 @@ describe('Billings enpoints tests', () => {
 
   afterAll(async () => {
     await Billings.deleteMany({});
+    await Users.deleteMany({});
     await mongoose.connection.close();
   });
 

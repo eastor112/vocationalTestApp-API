@@ -4,10 +4,12 @@ const QuestionSchema = new mongoose.Schema({
   test: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Test',
+    required: true,
   },
   type: {
     type: String,
     enum: ['BINARI', 'MULTIPLE'],
+    required: true,
   },
   statement: {
     type: String,

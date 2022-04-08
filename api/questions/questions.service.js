@@ -1,7 +1,7 @@
 const QuestionsModel = require('./questions.model');
 
 const getAllQuestions = async (limit, page) => {
-  const [total, question] = await Promise.all([
+  const [total, questions] = await Promise.all([
     QuestionsModel.countDocuments({ state: true }),
     QuestionsModel.find({ state: true })
       .limit(limit)
@@ -13,7 +13,7 @@ const getAllQuestions = async (limit, page) => {
     totalDocs: total,
     totalPages: Math.ceil(total / limit),
     currenPage: Number(page),
-    docs: question,
+    questions,
   };
 };
 

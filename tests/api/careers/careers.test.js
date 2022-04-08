@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const app = require('../../../app');
 const connectDB = require('../../../config/database');
-const User = require('../../../api/users/users.model');
+const Users = require('../../../api/users/users.model');
 const Careers = require('../../../api/careers/careers.model');
 
 const request = supertest(app);
@@ -80,7 +80,7 @@ describe('Careers enpoints tests', () => {
   });
 
   afterAll(async () => {
-    await User.deleteMany({});
+    await Users.deleteMany({});
     await Careers.deleteMany({});
 
     await mongoose.connection.close();

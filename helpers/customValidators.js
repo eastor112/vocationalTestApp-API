@@ -1,6 +1,5 @@
 const { ObjectId } = require('mongoose').Types;
 const User = require('../api/users/users.model');
-const Role = require('../commonModels/roles');
 const Billing = require('../api/billings/billings.model');
 const TestResults = require('../api/testResults/testResults.model');
 const Offers = require('../api/offers/offers.model');
@@ -8,7 +7,9 @@ const University = require('../api/universities/universities.model');
 const Careers = require('../api/careers/careers.model');
 const Question = require('../api/questions/questions.model');
 const VocationalTest = require('../api/vocationalTest/vocationalTest.model');
+const Role = require('../commonModels/roles');
 const PaymentMethod = require('../commonModels/paymentsMethods');
+const QuestionType = require('../commonModels/questionTypes');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -23,6 +24,13 @@ const isValidRoleOrEmpty = async (rol) => {
     if (!role) {
       throw new Error(`the role ${rol} doesn't exist`);
     }
+  }
+};
+
+const isValidQuestionType = async (type) => {
+  const questionType = await QuestionType.findOne({ type });
+  if (!questionType) {
+    throw new Error(`the question type ${type} doesn't exist`);
   }
 };
 
@@ -65,7 +73,7 @@ const questionExistsById = async (id) => {
   }
 };
 
-const vocationalTestExistsById = async (id) => {
+const TestExistsById = async (id) => {
   const vocationalTest = await VocationalTest.findOne({ _id: id, state: true });
   if (!vocationalTest) {
     throw new Error(`the vocationalTest with id ${id} doesn't exist`);
@@ -138,7 +146,8 @@ module.exports = {
   careerExistById,
   universityExistById,
   questionExistsById,
-  vocationalTestExistsById,
+  TestExistsById,
   isValidRoleOrEmpty,
   isValidPaymentMethodAndExist,
+  isValidQuestionType,
 };
