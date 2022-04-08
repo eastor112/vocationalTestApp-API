@@ -90,8 +90,8 @@ const searchUniversities = async (query, limit, page) => {
   const criteria = {
     $or: [
       { name: queryRegex },
-      { 'location.city': queryRegex },
-      { 'location.Country': queryRegex },
+      { 'address.city': queryRegex },
+      { 'address.Country': queryRegex },
       { 'offer.name': queryRegex }],
     $and: [{ state: true }],
   };
@@ -178,15 +178,18 @@ const searchOffers = async (query, limit, page, target) => {
 
     if (target === 'career') {
       if (ObjectId.isValid(query)) {
-        const offer = await Offers.find({ career: { _id: query } })
-          .populate('university', 'name')
-          .populate('career', 'name');
+        const [total, offers] = await Promise.all([
+          await Offers.countDocuments({ career: { _id: query }, state: true }),
+          Offers.find({ career: { _id: query, state: true } })
+            .populate('university', 'name')
+            .populate('career', 'name'),
+        ]);
 
         return {
-          totalDocs: offer ? 1 : 0,
+          totalDocs: total,
           currentPage: 1,
           totalPages: 1,
-          results: offer ? [offer] : [],
+          results: offers,
         };
       }
     }
@@ -248,7 +251,7 @@ const searchBilling = async (query, target, limit, page) => {
   }
 
   if (!Number.isNaN(Number(query))) {
-    const billing = await Billing.find({ transactionNumber: Number(query), state: true })
+    const billing = await Billing.findOne({ transactionNumber: Number(query), state: true })
       .populate('user', 'names email');
 
     return {
@@ -310,7 +313,8 @@ const searchResults = async (query, target, limit, page) => {
           await TestResults.countDocuments({ user: { _id: query }, state: true }),
           await TestResults.find({ user: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('careers', 'name'),
+            .populate('careers', 'name')
+            .populate('test', 'title'),
         ]);
 
         return {
@@ -325,7 +329,8 @@ const searchResults = async (query, target, limit, page) => {
           await TestResults.countDocuments({ test: { _id: query }, state: true }),
           await TestResults.find({ test: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('careers', 'name'),
+            .populate('careers', 'name')
+            .populate('test', 'title'),
         ]);
 
         return {
@@ -340,7 +345,8 @@ const searchResults = async (query, target, limit, page) => {
           await TestResults.countDocuments({ careers: { _id: query }, state: true }),
           await TestResults.find({ careers: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('careers', 'name'),
+            .populate('careers', 'name')
+            .populate('test', 'title'),
         ]);
 
         return {
@@ -352,10 +358,11 @@ const searchResults = async (query, target, limit, page) => {
 
       case 'question':
         [total, results] = await Promise.all([
-          await TestResults.countDocuments({ question: { _id: query }, state: true }),
-          await TestResults.find({ question: { _id: query }, state: true })
+          await TestResults.countDocuments({ questionResponse: { _id: query }, state: true }),
+          await TestResults.find({ questionResponse: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('careers', 'name'),
+            .populate('careers', 'name')
+            .populate('test', 'title'),
         ]);
 
         return {

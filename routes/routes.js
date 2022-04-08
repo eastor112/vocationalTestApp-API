@@ -17,7 +17,7 @@ function routes(app) {
   app.use('/api/users', users);
   app.use('/api/questions', questions);
   app.use('/api/tests', vocationalTest);
-  app.use('/api/testresults', testResults);
+  app.use('/api/results', testResults);
   app.use('/api/billings', billings);
   app.use('/api/search', search);
   app.use('/auth/local/login', localAuth);

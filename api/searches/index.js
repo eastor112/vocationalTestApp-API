@@ -19,14 +19,20 @@ router.get('/users/:query', [
   isAdminRoleMw,
 ], handlerUsersSearch);
 
-router.get('/universities/:query', handlerUniversitiesSearch);
+router.get('/universities/:query', [
+], handlerUniversitiesSearch);
 
-router.get('/careers/:query', handlerCareersSearch);
+router.get('/careers/:query', [
+], handlerCareersSearch);
 
-router.get('/offers/:query', [], handlerOffersSearch);
+router.get('/offers/:query', [
+], handlerOffersSearch);
 
-router.get('/questions/:query', handlerQuestionsSearch);
-router.get('/tests/:query', handlerTestsSearch);
+router.get('/questions/:query', [
+], handlerQuestionsSearch);
+
+router.get('/tests/:query', [
+], handlerTestsSearch);
 
 router.get('/billings/:query', [
   validateJwtMw,
