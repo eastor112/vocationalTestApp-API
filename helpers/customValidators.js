@@ -8,6 +8,7 @@ const University = require('../api/universities/universities.model');
 const Careers = require('../api/careers/careers.model');
 const Question = require('../api/questions/questions.model');
 const VocationalTest = require('../api/vocationalTest/vocationalTest.model');
+const PaymentMethod = require('../commonModels/paymentsMethods');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -25,6 +26,17 @@ const isValidRoleOrEmpty = async (rol) => {
   }
 };
 
+const isValidPaymentMethodAndExist = async (method) => {
+  if (!method) {
+    throw new Error('the payment method is required');
+  }
+  const paymentMethod = await PaymentMethod.findOne({ name: method });
+
+  if (!paymentMethod) {
+    throw new Error(`the payment method ${method} doesn't exist`);
+  }
+};
+
 const userExistById = async (id) => {
   const user = await User.findOne({ _id: id, state: true });
   if (!user) {
@@ -38,6 +50,7 @@ const emailExist = async (email = '') => {
     throw new Error(`the email ${email} is already registered`);
   }
 };
+
 const universityExistById = async (id) => {
   const university = await University.findOne({ _id: id, state: true });
   if (!university) {
@@ -127,4 +140,5 @@ module.exports = {
   questionExistsById,
   vocationalTestExistsById,
   isValidRoleOrEmpty,
+  isValidPaymentMethodAndExist,
 };

@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { billingExistById } = require('../../helpers/customValidators');
+const { billingExistById, userExistById, isValidPaymentMethodAndExist } = require('../../helpers/customValidators');
 const { validateJwtMw, isAdminRoleMw, fieldsValidatorMw } = require('../../middlewares');
 
 const {
@@ -26,13 +26,19 @@ router.get('/:id', [
 ], handlerGetOneBilling);
 
 router.post('/', [
-
+  validateJwtMw,
+  check('user', 'userId is required').notEmpty(),
+  check('user', 'userId is not valid').isMongoId(),
+  check('user').custom(userExistById),
+  check('paymentMethod').custom(isValidPaymentMethodAndExist),
+  fieldsValidatorMw,
 ], handlerCreateBilling);
 
 router.patch('/:id', [
   validateJwtMw,
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(billingExistById),
+  check('paymentMethod').custom(isValidPaymentMethodAndExist),
   fieldsValidatorMw,
 ], handlerUpdateBilling);
 
