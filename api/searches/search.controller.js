@@ -59,17 +59,16 @@ const handlerOffersSearch = async (req, res) => {
   }
 };
 
-const handlerResultsSearch = async (req, res) => {
-  const { limit = 5, page = 1, target } = req.query;
+const handlerQuestionsSearch = async (req, res) => {
   const { query } = req.params;
 
-  try {
-    const results = await searchResults(query, target, limit, page);
+  res.json({ msg: 'handlerQuestionsSearch' });
+};
 
-    return res.json(results);
-  } catch (error) {
-    return res.status(500).json({ msg: error.message });
-  }
+const handlerTestsSearch = async (req, res) => {
+  const { query } = req.params;
+
+  res.json({ msg: 'handlerTestsSearch' });
 };
 
 const handlerBillingsSearch = async (req, res) => {
@@ -85,16 +84,17 @@ const handlerBillingsSearch = async (req, res) => {
   }
 };
 
-const handlerQuestionsSearch = async (req, res) => {
+const handlerResultsSearch = async (req, res) => {
+  const { limit = 5, page = 1, target } = req.query;
   const { query } = req.params;
 
-  res.json({ msg: 'handlerQuestionsSearch' });
-};
+  try {
+    const results = await searchResults(query, target, limit, page);
 
-const handlerTestsSearch = async (req, res) => {
-  const { query } = req.params;
-
-  res.json({ msg: 'handlerTestsSearch' });
+    return res.json(results);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
 };
 
 module.exports = {
