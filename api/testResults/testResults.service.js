@@ -29,10 +29,7 @@ const getOneTestResults = async (id) => {
 };
 
 const createTestResults = async (data) => {
-  const testResut = await TestResults.create(data)
-    .populate('user', 'names email')
-    .populate('test', 'name description')
-    .populate('careers', 'name description');
+  const testResut = await TestResults.create(data);
 
   return testResut;
 };

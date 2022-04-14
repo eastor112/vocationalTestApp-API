@@ -90,8 +90,8 @@ const searchUniversities = async (query, limit, page) => {
   const criteria = {
     $or: [
       { name: queryRegex },
-      { 'location.city': queryRegex },
-      { 'location.Country': queryRegex },
+      { 'address.city': queryRegex },
+      { 'address.Country': queryRegex },
       { 'offer.name': queryRegex }],
     $and: [{ state: true }],
   };
@@ -178,15 +178,18 @@ const searchOffers = async (query, limit, page, target) => {
 
     if (target === 'career') {
       if (ObjectId.isValid(query)) {
-        const offer = await Offers.find({ career: { _id: query } })
-          .populate('university', 'name')
-          .populate('career', 'name');
+        const [total, offers] = await Promise.all([
+          await Offers.countDocuments({ career: { _id: query }, state: true }),
+          Offers.find({ career: { _id: query, state: true } })
+            .populate('university', 'name')
+            .populate('career', 'name'),
+        ]);
 
         return {
-          totalDocs: offer ? 1 : 0,
+          totalDocs: total,
           currentPage: 1,
           totalPages: 1,
-          results: offer ? [offer] : [],
+          results: offers,
         };
       }
     }
@@ -211,95 +214,6 @@ const searchOffers = async (query, limit, page, target) => {
     totalPages: Math.ceil(total / limit),
     results: offers,
   };
-};
-
-const searchResults = async (query, target, limit, page) => {
-  const isMongoId = ObjectId.isValid(query);
-
-  if (isMongoId) {
-    let results;
-    let total;
-
-    switch (target) {
-      case undefined:
-        results = await TestResults.findOne({ _id: query, state: true })
-          .populate('user', 'names email')
-          .populate('careers', 'name');
-
-        return {
-          totalDocs: results ? 1 : 0,
-          currentPage: 1,
-          totalPages: 1,
-          results: results ? [results] : [],
-        };
-
-      case 'user':
-
-        [total, results] = await Promise.all([
-          await TestResults.countDocuments({ user: { _id: query }, state: true }),
-          await TestResults.find({ user: { _id: query }, state: true })
-            .populate('user', 'names email')
-            .populate('careers', 'name'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: Number(page),
-          totalPages: Math.ceil(total / limit),
-          results,
-        };
-
-      case 'test':
-        [total, results] = await Promise.all([
-          await TestResults.countDocuments({ test: { _id: query }, state: true }),
-          await TestResults.find({ test: { _id: query }, state: true })
-            .populate('user', 'names email')
-            .populate('careers', 'name'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: Number(page),
-          totalPages: Math.ceil(total / limit),
-          results,
-        };
-
-      case 'careers':
-        [total, results] = await Promise.all([
-          await TestResults.countDocuments({ careers: { _id: query }, state: true }),
-          await TestResults.find({ careers: { _id: query }, state: true })
-            .populate('user', 'names email')
-            .populate('careers', 'name'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: Number(page),
-          totalPages: Math.ceil(total / limit),
-          results,
-        };
-
-      case 'question':
-        [total, results] = await Promise.all([
-          await TestResults.countDocuments({ question: { _id: query }, state: true }),
-          await TestResults.find({ question: { _id: query }, state: true })
-            .populate('user', 'names email')
-            .populate('careers', 'name'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: Number(page),
-          totalPages: Math.ceil(total / limit),
-          results,
-        };
-
-      default:
-        throw new Error('Target is not in [user, test, careers, question]');
-    }
-  }
-
-  throw new Error(`${query} is not a valid MongoId`);
 };
 
 const searchBilling = async (query, target, limit, page) => {
@@ -337,7 +251,7 @@ const searchBilling = async (query, target, limit, page) => {
   }
 
   if (!Number.isNaN(Number(query))) {
-    const billing = await Billing.find({ transactionNumber: Number(query), state: true })
+    const billing = await Billing.findOne({ transactionNumber: Number(query), state: true })
       .populate('user', 'names email');
 
     return {
@@ -371,6 +285,99 @@ const searchBilling = async (query, target, limit, page) => {
     totalPages: Math.ceil(total / limit),
     results: billings,
   };
+};
+
+const searchResults = async (query, target, limit, page) => {
+  const isMongoId = ObjectId.isValid(query);
+
+  if (isMongoId) {
+    let results;
+    let total;
+
+    switch (target) {
+      case undefined:
+        results = await TestResults.findOne({ _id: query, state: true })
+          .populate('user', 'names email')
+          .populate('careers', 'name');
+
+        return {
+          totalDocs: results ? 1 : 0,
+          currentPage: 1,
+          totalPages: 1,
+          results: results ? [results] : [],
+        };
+
+      case 'user':
+
+        [total, results] = await Promise.all([
+          await TestResults.countDocuments({ user: { _id: query }, state: true }),
+          await TestResults.find({ user: { _id: query }, state: true })
+            .populate('user', 'names email')
+            .populate('careers', 'name')
+            .populate('test', 'title'),
+        ]);
+
+        return {
+          totalDocs: total,
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / limit),
+          results,
+        };
+
+      case 'test':
+        [total, results] = await Promise.all([
+          await TestResults.countDocuments({ test: { _id: query }, state: true }),
+          await TestResults.find({ test: { _id: query }, state: true })
+            .populate('user', 'names email')
+            .populate('careers', 'name')
+            .populate('test', 'title'),
+        ]);
+
+        return {
+          totalDocs: total,
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / limit),
+          results,
+        };
+
+      case 'careers':
+        [total, results] = await Promise.all([
+          await TestResults.countDocuments({ careers: { _id: query }, state: true }),
+          await TestResults.find({ careers: { _id: query }, state: true })
+            .populate('user', 'names email')
+            .populate('careers', 'name')
+            .populate('test', 'title'),
+        ]);
+
+        return {
+          totalDocs: total,
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / limit),
+          results,
+        };
+
+      case 'question':
+        [total, results] = await Promise.all([
+          await TestResults.countDocuments({ questionResponse: { _id: query }, state: true }),
+          await TestResults.find({ questionResponse: { _id: query }, state: true })
+            .populate('user', 'names email')
+            .populate('careers', 'name')
+            .populate('test', 'title'),
+        ]);
+
+        return {
+          totalDocs: total,
+          currentPage: Number(page),
+          totalPages: Math.ceil(total / limit),
+          results,
+        };
+
+      default:
+        throw new Error('Target is not in [user, test, careers, question]');
+    }
+  }
+
+  throw new Error(`${query} is not a valid MongoId`);
 };
 
 module.exports = {

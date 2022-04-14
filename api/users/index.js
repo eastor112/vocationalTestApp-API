@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { isValidRole, emailExist, userExistById } = require('../../helpers/customValidators');
+const { isValidRole, isValidRoleOrEmpty, emailExist, userExistById } = require('../../helpers/customValidators');
 
 const {
   fieldsValidatorMw,
@@ -19,12 +19,12 @@ const {
 const router = Router();
 
 router.get('/', [
-
+  validateJwtMw,
+  isAdminRoleMw,
 ], handlerAllUsers);
 
 router.get('/:id', [
   validateJwtMw,
-  isAdminRoleMw,
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(userExistById),
   fieldsValidatorMw,
@@ -51,7 +51,7 @@ router.patch('/:id', [
   validateJwtMw,
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(userExistById),
-  check('role').custom(isValidRole),
+  check('role').custom(isValidRoleOrEmpty),
   fieldsValidatorMw,
 ], handlerUpdateUser);
 
