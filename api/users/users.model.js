@@ -66,11 +66,19 @@ const UserSchema = new mongoose.Schema({
   },
   state: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   google: {
     type: Boolean,
     default: false,
+  },
+  passResetToken: {
+    type: String,
+    default: null,
+  },
+  passResetExpires: {
+    type: Date,
+    default: null,
   },
 }, {
   timestamps: true,

@@ -11,6 +11,10 @@ const signToken = async (payload) => {
   }
 };
 
+const activateAccount = async (req, res) => {
+};
+
 module.exports = {
   signToken,
+  activateAccount,
 };
