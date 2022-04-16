@@ -130,7 +130,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 UserSchema.methods.toJSON = function () {
   const user = this;
   /* eslint-disable */
-  const { password, _id, __v, state, google, ...rest } = user.toObject();
+  const { password, _id, __v, state, ...rest } = user.toObject();
   rest.uid = _id;
   /* eslint-enable */
 

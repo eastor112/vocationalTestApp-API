@@ -78,7 +78,25 @@ const handlerActivateAccount = async (req, res) => {
   }
 };
 
+const handlerReLogin = async (req, res) => {
+  const { user } = req;
+
+  try {
+    const token = await signToken(user.public);
+
+    return res.status(200).json({
+      token,
+      user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      msg: 'Something went wrong with token',
+    });
+  }
+};
+
 module.exports = {
   handlerLogin,
   handlerActivateAccount,
+  handlerReLogin,
 };

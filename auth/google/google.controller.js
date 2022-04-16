@@ -1,3 +1,4 @@
+const crypto = require('crypto');
 const User = require('../../api/users/users.model');
 const { signToken } = require('../auth.service');
 const googleVerify = require('../../helpers/googleTokenValidator');
@@ -18,7 +19,7 @@ const handlerGoogleLogin = async (req, res) => {
         email,
         profile,
         google: true,
-        password: '(:P)',
+        password: crypto.randomBytes(20).toString('hex'),
       });
       user = await user.save();
     }
@@ -42,4 +43,6 @@ const handlerGoogleLogin = async (req, res) => {
   }
 };
 
-module.exports = handlerGoogleLogin;
+module.exports = {
+  handlerGoogleLogin,
+};
