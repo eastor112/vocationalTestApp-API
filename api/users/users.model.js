@@ -66,11 +66,19 @@ const UserSchema = new mongoose.Schema({
   },
   state: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   google: {
     type: Boolean,
     default: false,
+  },
+  passResetToken: {
+    type: String,
+    default: null,
+  },
+  passResetExpires: {
+    type: Date,
+    default: null,
   },
 }, {
   timestamps: true,
@@ -122,7 +130,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 UserSchema.methods.toJSON = function () {
   const user = this;
   /* eslint-disable */
-  const { password, _id, __v, state, google, ...rest } = user.toObject();
+  const { password, _id, __v, state, ...rest } = user.toObject();
   rest.uid = _id;
   /* eslint-enable */
 

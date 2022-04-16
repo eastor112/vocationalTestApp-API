@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
-const { fieldsValidatorMw } = require('../../middlewares');
-const handlerLogin = require('./local.controller');
+const { fieldsValidatorMw, validateJwtMw } = require('../../middlewares');
+const { handlerLogin, handlerActivateAccount, handlerReLogin } = require('./local.controller');
 
 const router = Router();
 
@@ -10,5 +10,11 @@ router.post('/', [
   check('password', 'password is required').not().isEmpty(),
   fieldsValidatorMw,
 ], handlerLogin);
+
+router.get('/activate/:token', handlerActivateAccount);
+
+router.post('/validate', [
+  validateJwtMw,
+], handlerReLogin);
 
 module.exports = router;

@@ -1,3 +1,5 @@
+const crypto = require('crypto');
+const { sendMailWithSengrid } = require('../../utils/email');
 const User = require('./users.model');
 
 const getAllUsers = async (limit, page) => {
@@ -33,6 +35,23 @@ const deleteUser = async (id) => {
 
 const createUser = async (user) => {
   const newUser = await User.create(user);
+
+  newUser.passResetToken = crypto.randomBytes(20).toString('hex');
+  newUser.passResetExpires = Date.now() + 3600000 * 24;
+
+  await newUser.save();
+
+  const email = {
+    from: '"no reply" <emerar.mct@gmail.com>',
+    to: newUser.email,
+    subject: 'Activate your account',
+    template_id: 'd-ab97f9d7fb4c4c428d236ba38304d2ec',
+    dynamic_template_data: {
+      url: `${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`,
+    },
+  };
+
+  await sendMailWithSengrid(email);
 
   return newUser;
 };
