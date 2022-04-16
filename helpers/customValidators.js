@@ -8,6 +8,7 @@ const University = require('../api/universities/universities.model');
 const Careers = require('../api/careers/careers.model');
 const Question = require('../api/questions/questions.model');
 const VocationalTest = require('../api/vocationalTest/vocationalTest.model');
+const QuestionResponse = require('../api/questionResponse/questionResponse.model');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -104,6 +105,13 @@ const careerExistById = async (id) => {
   }
 };
 
+const questionResponseExistById = async (id) => {
+  const questionResponse = await QuestionResponse.findOne({ _id: id, state: true });
+  if (!questionResponse || !questionResponse.state) {
+    throw new Error(`the questionResponse with id ${id} doesn't exist`);
+  }
+};
+
 module.exports = {
   isValidRole,
   userExistById,
@@ -117,4 +125,5 @@ module.exports = {
   universityExistById,
   questionExistsById,
   vocationalTestExistsById,
+  questionResponseExistById,
 };
