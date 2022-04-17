@@ -4,6 +4,7 @@ const { careerExistById } = require('../../helpers/customValidators');
 const { fieldsValidatorMw } = require('../../middlewares/fieldsValidator');
 const { isAdminRoleMw } = require('../../middlewares/rolesValidator');
 const { validateJwtMw } = require('../../middlewares/tokenValidator');
+const upload = require('../../config/multer');
 
 const {
   handlerGetAllCareers,
@@ -36,6 +37,7 @@ router.patch('/:id', [
   check('id', 'id is not valid').isMongoId(),
   check('id').custom(careerExistById),
   fieldsValidatorMw,
+  upload.single('photo'),
 ], handlerUpdateCareer);
 
 router.delete('/:id', [

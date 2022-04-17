@@ -1,4 +1,3 @@
-const fs = require('fs');
 const {
   getOneUser,
   getAllUsers,
@@ -6,7 +5,7 @@ const {
   createUser,
   updateUser,
 } = require('./users.service');
-const cloudinary = require('../../config/cloudinary');
+const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
 
 const handlerAllUsers = async (req, res) => {
   const { limit = 5, page = 1 } = req.query;
@@ -88,18 +87,12 @@ const handlerUpdateUser = async (req, res) => {
     return res.status(400).json({ msg: 'Admin role is not allowed' });
   }
 
-  if (req.file) {
-    const result = await cloudinary.uploader.upload(req.file.path);
-    rest.profile = result.secure_url;
-    // eslint-disable-next-line consistent-return
-    fs.unlink(req.file.path, (err) => {
-      if (err) {
-        return res.status(500).json({ msg: 'Server error' });
-      }
-    });
-  }
-
   try {
+    if (req.file) {
+      const secureUrl = await uploadToCloudinaryAndCleanTemp(req.file.path, 'users');
+      rest.profile = secureUrl;
+    }
+
     const user = await updateUser(id, rest);
 
     return res.json(user);

@@ -1,8 +1,8 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { universityExistById } = require('../../helpers/customValidators');
-const { fieldsValidatorMw } = require('../../middlewares/fieldsValidator');
-const { validateJwtMw } = require('../../middlewares/tokenValidator');
+const { validateJwtMw, fieldsValidatorMw } = require('../../middlewares');
+const upload = require('../../config/multer');
 
 const {
   handlerAllUniversities,
@@ -10,7 +10,9 @@ const {
   handlerDeleteUniversity,
   handlerCreateUniversity,
   handlerUpdateUniversity,
+  handlerDeleteImageUniversity,
 } = require('./universities.controller');
+const { universityIdValidatorMw } = require('../../middlewares');
 
 const router = Router();
 
@@ -37,8 +39,23 @@ router.post('/', [
 router.patch('/:id', [
   validateJwtMw,
   check('id', 'is not a valid id').isMongoId(),
-  check('id').custom(universityExistById),
+  universityIdValidatorMw,
   fieldsValidatorMw,
+  upload.fields([{
+    name: 'logo',
+    maxCount: 1,
+  }, {
+    name: 'campus',
+    maxCount: 1,
+  }]),
+
 ], handlerUpdateUniversity);
+
+router.delete('/:id/dropimages', [
+  validateJwtMw,
+  check('id', 'is not a valid id').isMongoId(),
+  universityIdValidatorMw,
+  fieldsValidatorMw,
+], handlerDeleteImageUniversity);
 
 module.exports = router;

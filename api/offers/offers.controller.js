@@ -1,3 +1,4 @@
+const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
 const {
   getAllOffers,
   getOneOffer,
@@ -46,6 +47,11 @@ const handlerUpdateOffer = async (req, res) => {
   const { _id, __v, state, createdAt, updateAt, ...rest } = req.body;
 
   try {
+    if (req.file) {
+      const secureUrl = await uploadToCloudinaryAndCleanTemp(req.file.path, 'offers');
+      rest.photo = secureUrl;
+    }
+
     const offer = await updateOffer(id, rest);
     return res.json(offer);
   } catch (error) {
