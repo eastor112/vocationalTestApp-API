@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const { sendMailWithSengrid } = require('../../utils/email');
 const User = require('./users.model');
+const cloudinary = require('../../config/cloudinary');
+const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
 
 const getAllUsers = async (limit, page) => {
   const query = { state: true };
@@ -56,8 +58,12 @@ const createUser = async (user) => {
   return newUser;
 };
 
-const updateUser = async (id, user) => {
-  const updatedUser = await User.findByIdAndUpdate(id, user, { new: true })
+const updateUser = async (id, rest) => {
+  const userOld = await User.findById(id);
+
+  if (rest.profile) cleanCloudinary(userOld.profile, 'users');
+
+  const updatedUser = await User.findByIdAndUpdate(id, rest, { new: true })
     .populate('university', 'name');
 
   return updatedUser;

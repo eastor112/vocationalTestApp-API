@@ -22,7 +22,10 @@ const CareersSchema = new mongoose.Schema({
     list: [String],
     references: [String],
   },
-  photo: String,
+  photo: {
+    type: String,
+    default: '',
+  },
   state: {
     type: Boolean,
     default: true,

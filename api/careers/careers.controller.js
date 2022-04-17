@@ -1,4 +1,11 @@
-const { getAllCareers, getOneCareer, createCareer, updateCareer, deleteCareer } = require('./careers.service');
+const {
+  getAllCareers,
+  getOneCareer,
+  createCareer,
+  updateCareer,
+  deleteCareer,
+} = require('./careers.service');
+const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
 
 const handlerGetAllCareers = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
@@ -45,11 +52,16 @@ const handlerUpdateCareer = async (req, res) => {
   const { _id, state, __v, updatedAt, createdAt, ...rest } = req.body;
 
   try {
+    if (req.file) {
+      const secureUrl = await uploadToCloudinaryAndCleanTemp(req.file.path, 'careers');
+      rest.photo = secureUrl;
+    }
+
     const career = await updateCareer(id, rest);
 
     res.json(career);
-  } catch (error) {
-    res.status(500).json({ msg: 'Error updating career' });
+  } catch (err) {
+    res.status(500).json({ msg: err.message });
   }
 };
 

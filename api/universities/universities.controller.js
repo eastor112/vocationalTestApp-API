@@ -1,3 +1,4 @@
+const { uploadToCloudinaryAndCleanTemp, cleanLocal, cleanCloudinary } = require('../../helpers/cloudinaryActions');
 const {
   getOneUniversity,
   getAllUniversities,
@@ -54,15 +55,74 @@ const handlerCreateUniversity = async (req, res) => {
 
 const handlerUpdateUniversity = async (req, res) => {
   const { id } = req.params;
+  const universityOld = req.university;
   const { _id, state, createdAt, updatedAp, __v, ...rest } = req.body;
 
   try {
+    if (req.files) {
+      const { logo, campus } = req.files;
+
+      if (campus) {
+        if (universityOld.campus.length < 5) {
+          const secureUrlCampus = await uploadToCloudinaryAndCleanTemp(
+            campus[0].path,
+            `universities/${universityOld.id}`,
+          );
+          rest.campus = [...universityOld.campus, secureUrlCampus];
+        } else {
+          cleanLocal(campus[0].path);
+
+          if (logo) cleanLocal(logo[0].path);
+
+          return res.status(400).json({ msg: 'You can only add 5 images' });
+        }
+      }
+
+      if (logo) {
+        const secureUrlLogo = await uploadToCloudinaryAndCleanTemp(
+          logo[0].path,
+          `universities/${universityOld.id}`,
+        );
+        rest.logo = secureUrlLogo;
+        cleanCloudinary(universityOld.logo, `universities/${universityOld.id}`);
+      }
+    }
+
     const university = await updateUniversity(id, rest);
 
     return res.json(university);
-  } catch (error) {
-    return res.status(500).json({ msg: 'Error updating university' });
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
   }
+};
+
+const handlerDeleteImageUniversity = async (req, res) => {
+  const { target, img } = req.query;
+  const universityOld = req.university;
+
+  if (target === 'logo') {
+    cleanCloudinary(universityOld.logo, `universities/${universityOld.id}`);
+    universityOld.logo = null;
+
+    universityOld.save();
+    return res.status(204).json({ msg: 'Image deleted' });
+  }
+
+  if (target === 'campus') {
+    if (universityOld.campus.includes(img)) {
+      cleanCloudinary(img, `universities/${universityOld.id}`);
+
+      universityOld.campus = universityOld.campus.filter(
+        (campus) => campus !== img,
+      );
+      universityOld.save();
+
+      return res.status(204).json({ msg: 'Image deleted' });
+    }
+    return res.status(400).json({ msg: 'Image not found' });
+  }
+
+  return res.status(400).json({ msg: 'invalid target' });
 };
 
 module.exports = {
@@ -71,4 +131,5 @@ module.exports = {
   handlerDeleteUniversity,
   handlerCreateUniversity,
   handlerUpdateUniversity,
+  handlerDeleteImageUniversity,
 };

@@ -10,6 +10,7 @@ const {
   handlerUpdateOffer,
   handlerDeleteOffer,
 } = require('./offers.controller');
+const upload = require('../../config/multer');
 
 const router = Router();
 
@@ -37,6 +38,7 @@ router.patch('/:id', [
   check('university').custom(isUniversityMongoIdAndExistOrEmpty),
   check('career').custom(isCareerMongoIdAndExistOrEmpty),
   fieldsValidatorMw,
+  upload.single('photo'),
 ], handlerUpdateOffer);
 
 router.delete('/:id', [

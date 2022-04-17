@@ -1,9 +1,10 @@
-const UniversitiesModel = require('./universities.model');
+const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
+const University = require('./universities.model');
 
 const getAllUniversities = async (limit, page) => {
   const [total, universities] = await Promise.all([
-    UniversitiesModel.countDocuments({ state: true }),
-    UniversitiesModel.find({ state: true })
+    University.countDocuments({ state: true }),
+    University.find({ state: true })
       .limit(limit)
       .skip(limit * (page - 1))
       .populate('offer', 'name'),
@@ -18,7 +19,7 @@ const getAllUniversities = async (limit, page) => {
 };
 
 async function getOneUniversity(id) {
-  const university = await UniversitiesModel.findOne({ _id: id, state: true })
+  const university = await University.findOne({ _id: id, state: true })
     .populate('offer', 'name');
 
   if (!university) {
@@ -29,21 +30,21 @@ async function getOneUniversity(id) {
 }
 
 async function deleteUniversity(id) {
-  const university = await UniversitiesModel.findByIdAndUpdate(id, { state: false });
+  const university = await University.findByIdAndUpdate(id, { state: false });
 
   return university;
 }
 
 async function createUniversity(newUniversity) {
-  const university = await UniversitiesModel.create(newUniversity);
+  const university = await University.create(newUniversity);
 
   return university;
 }
 
-async function updateUniversity(id, university) {
-  const updatedUniversity = await UniversitiesModel.findOneAndUpdate(
+async function updateUniversity(id, rest) {
+  const updatedUniversity = await University.findOneAndUpdate(
     { _id: id, state: true },
-    university,
+    rest,
     { new: true },
   );
 

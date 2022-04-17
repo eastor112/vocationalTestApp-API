@@ -5,6 +5,7 @@ const {
   createUser,
   updateUser,
 } = require('./users.service');
+const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
 
 const handlerAllUsers = async (req, res) => {
   const { limit = 5, page = 1 } = req.query;
@@ -69,9 +70,29 @@ const handlerCreateUser = async (req, res) => {
 
 const handlerUpdateUser = async (req, res) => {
   const { id } = req.params;
-  const { _id, __v, email, state, role, ...rest } = req.body;
+  const {
+    _id,
+    __v,
+    email,
+    state,
+    google,
+    passResetToken,
+    passResetExpires,
+    updatedAt,
+    createddAt,
+    ...rest
+  } = req.body;
+
+  if (rest.role === 'ADMIN') {
+    return res.status(400).json({ msg: 'Admin role is not allowed' });
+  }
 
   try {
+    if (req.file) {
+      const secureUrl = await uploadToCloudinaryAndCleanTemp(req.file.path, 'users');
+      rest.profile = secureUrl;
+    }
+
     const user = await updateUser(id, rest);
 
     return res.json(user);

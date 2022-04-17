@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { isValidRole, isValidRoleOrEmpty, emailExist, userExistById } = require('../../helpers/customValidators');
+const upload = require('../../config/multer');
 
 const {
   fieldsValidatorMw,
@@ -53,6 +54,7 @@ router.patch('/:id', [
   check('id').custom(userExistById),
   check('role').custom(isValidRoleOrEmpty),
   fieldsValidatorMw,
+  upload.single('profile'),
 ], handlerUpdateUser);
 
 module.exports = router;
