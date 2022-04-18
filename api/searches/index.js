@@ -10,6 +10,7 @@ const {
   handlerBillingsSearch,
   handlerOffersSearch,
   handlerResultsSearch,
+  handlerQuestionResponseSearch,
 } = require('./search.controller');
 
 const router = Router();
@@ -41,5 +42,9 @@ router.get('/billings/:query', [
 router.get('/results/:query', [
   validateJwtMw,
 ], handlerResultsSearch);
+
+router.get('/questionResponse/:query', [
+  validateJwtMw,
+], handlerQuestionResponseSearch);
 
 module.exports = router;

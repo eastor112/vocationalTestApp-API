@@ -10,6 +10,7 @@ const VocationalTest = require('../api/vocationalTest/vocationalTest.model');
 const Role = require('../commonModels/roles');
 const PaymentMethod = require('../commonModels/paymentsMethods');
 const QuestionType = require('../commonModels/questionTypes');
+const QuestionResponse = require('../api/questionResponse/questionResponse.model');
 
 const isValidRole = async (rol = '') => {
   const role = await Role.findOne({ rol });
@@ -134,6 +135,20 @@ const careerExistById = async (id) => {
   }
 };
 
+const questionResponseExistById = async (id) => {
+  const questionResponse = await QuestionResponse.findOne({ _id: id, state: true });
+  if (!questionResponse || !questionResponse.state) {
+    throw new Error(`the questionResponse with id ${id} doesn't exist`);
+  }
+};
+
+const vocationalTestExistsById = async (id) => {
+  const vocationalTest = await VocationalTest.findOne({ _id: id, state: true });
+  if (!vocationalTest || !vocationalTest.state) {
+    throw new Error(`the vocationalTest with id ${id} doesn't exist`);
+  }
+};
+
 module.exports = {
   isValidRole,
   userExistById,
@@ -150,4 +165,6 @@ module.exports = {
   isValidRoleOrEmpty,
   isValidPaymentMethodAndExist,
   isValidQuestionType,
+  vocationalTestExistsById,
+  questionResponseExistById,
 };
