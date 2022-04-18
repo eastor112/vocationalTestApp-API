@@ -41,8 +41,7 @@ const createUser = async (user) => {
   newUser.passResetExpires = Date.now() + 3600000 * 24;
 
   await newUser.save();
-  console.log('=========>>>', process.env.NODE_ENV);
-  console.log(`'===========>>>>>>>>>>',${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`);
+
   if (process.env.NODE_ENV !== 'test') {
     const email = {
       from: 'no reply <easto@unitru.edu.pe>',
