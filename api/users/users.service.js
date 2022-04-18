@@ -1,11 +1,10 @@
 const crypto = require('crypto');
 const { sendMailWithSengrid } = require('../../utils/email');
 const User = require('./users.model');
-const cloudinary = require('../../config/cloudinary');
 const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
 
 const getAllUsers = async (limit, page) => {
-  const query = { state: true };
+  const query = {};
 
   const [total, users] = await Promise.all([
     User.countDocuments(query),
@@ -42,10 +41,11 @@ const createUser = async (user) => {
   newUser.passResetExpires = Date.now() + 3600000 * 24;
 
   await newUser.save();
-
+  console.log('=========>>>', process.env.NODE_ENV);
+  console.log(`'===========>>>>>>>>>>',${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`);
   if (process.env.NODE_ENV !== 'test') {
     const email = {
-      from: '"no reply" <easto@unitru.edu.pe>',
+      from: 'no reply <easto@unitru.edu.pe>',
       to: newUser.email,
       subject: 'Activate your account',
       template_id: process.env.EMAIL_TEMPLATE_ID,

@@ -47,7 +47,7 @@ const isValidPaymentMethodAndExist = async (method) => {
 };
 
 const userExistById = async (id) => {
-  const user = await User.findOne({ _id: id, state: true });
+  const user = await User.findOne({ _id: id });
   if (!user) {
     throw new Error(`the user with id ${id} doesn't exist`);
   }
