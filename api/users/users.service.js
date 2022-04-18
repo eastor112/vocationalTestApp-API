@@ -45,10 +45,10 @@ const createUser = async (user) => {
 
   if (process.env.NODE_ENV !== 'test') {
     const email = {
-      from: '"no reply" <emerar.mct@gmail.com>',
+      from: '"no reply" <easto@unitru.edu.pe>',
       to: newUser.email,
       subject: 'Activate your account',
-      template_id: 'd-ab97f9d7fb4c4c428d236ba38304d2ec',
+      template_id: process.env.EMAIL_TEMPLATE_ID,
       dynamic_template_data: {
         url: `${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`,
       },
