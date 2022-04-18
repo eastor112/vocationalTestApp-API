@@ -9,6 +9,7 @@ const offers = require('../api/offers');
 const careers = require('../api/careers');
 const questions = require('../api/questions');
 const vocationalTest = require('../api/vocationalTest');
+const questionResponse = require('../api/questionResponse');
 
 function routes(app) {
   app.use('/api/careers', careers);
@@ -18,6 +19,8 @@ function routes(app) {
   app.use('/api/questions', questions);
   app.use('/api/tests', vocationalTest);
   app.use('/api/results', testResults);
+  app.use('/api/questionResponse', questionResponse);
+  app.use('/api/testresults', testResults);
   app.use('/api/billings', billings);
   app.use('/api/search', search);
   app.use('/auth/local/login', localAuth);
