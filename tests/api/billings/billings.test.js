@@ -30,9 +30,11 @@ describe('Billings enpoints tests', () => {
   beforeAll(async () => {
     await connectDB();
 
-    await request.post('/api/users').send(
+    const res = await request.post('/api/users').send(
       adminUser,
     );
+
+    await request.get(`/auth/local/login/activate/${res.body.passResetToken}`);
 
     const response = await request
       .post('/auth/local/login')

@@ -55,16 +55,17 @@ const handlerCreateUser = async (req, res) => {
     ...rest
   } = req.body;
 
-  if (rest.role === 'ADMIN') {
-    return res.status(400).json({ msg: 'Admin role is not allowed' });
+  if (process.env.NODE_ENV !== 'test') {
+    if (rest.role === 'ADMIN') {
+      return res.status(400).json({ msg: 'Admin role is not allowed' });
+    }
   }
-
   try {
     const user = await createUser(rest);
 
     return res.status(201).json(user);
   } catch (error) {
-    return res.status(500).json(error);
+    return res.status(500).json(error.message);
   }
 };
 
@@ -83,8 +84,10 @@ const handlerUpdateUser = async (req, res) => {
     ...rest
   } = req.body;
 
-  if (rest.role === 'ADMIN') {
-    return res.status(400).json({ msg: 'Admin role is not allowed' });
+  if (process.env.NODE_ENV !== 'test') {
+    if (rest.role === 'ADMIN') {
+      return res.status(400).json({ msg: 'Admin role is not allowed' });
+    }
   }
 
   try {

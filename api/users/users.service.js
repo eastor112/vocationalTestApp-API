@@ -43,17 +43,19 @@ const createUser = async (user) => {
 
   await newUser.save();
 
-  const email = {
-    from: '"no reply" <emerar.mct@gmail.com>',
-    to: newUser.email,
-    subject: 'Activate your account',
-    template_id: 'd-ab97f9d7fb4c4c428d236ba38304d2ec',
-    dynamic_template_data: {
-      url: `${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`,
-    },
-  };
+  if (process.env.NODE_ENV !== 'test') {
+    const email = {
+      from: '"no reply" <emerar.mct@gmail.com>',
+      to: newUser.email,
+      subject: 'Activate your account',
+      template_id: 'd-ab97f9d7fb4c4c428d236ba38304d2ec',
+      dynamic_template_data: {
+        url: `${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`,
+      },
+    };
 
-  await sendMailWithSengrid(email);
+    await sendMailWithSengrid(email);
+  }
 
   return newUser;
 };

@@ -40,8 +40,10 @@ describe('Searches enpoints tests', () => {
 
     universityId = university.id;
 
-    await request.post('/api/users')
+    const res = await request.post('/api/users')
       .send({ ...adminUser, university: universityId });
+
+    await request.get(`/auth/local/login/activate/${res.body.passResetToken}`);
 
     let response = await request
       .post('/auth/local/login')

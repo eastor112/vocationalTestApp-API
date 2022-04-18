@@ -43,8 +43,10 @@ describe('Questions enpoints tests', () => {
   beforeAll(async () => {
     instanceDB = await connectDB();
 
-    await request.post('/api/users')
+    const res = await request.post('/api/users')
       .send(adminUser);
+
+    await request.get(`/auth/local/login/activate/${res.body.passResetToken}`);
 
     let response = await request
       .post('/auth/local/login')

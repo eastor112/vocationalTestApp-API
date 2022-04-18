@@ -41,7 +41,11 @@ describe('Users enpoints tests', () => {
 
   test('should create 3 users, and login with an admin account', async () => {
     const usersPromises = initialUsers.map((user) => request.post('/api/users').send(user));
-    await Promise.all(usersPromises);
+    const [r1, r2, r3] = await Promise.all(usersPromises);
+
+    await request.get(`/auth/local/login/activate/${r1.body.passResetToken}`);
+    await request.get(`/auth/local/login/activate/${r2.body.passResetToken}`);
+    await request.get(`/auth/local/login/activate/${r3.body.passResetToken}`);
 
     let response = await request
       .post('/auth/local/login')
@@ -159,6 +163,4 @@ describe('Users enpoints tests', () => {
 
     expect(response.status).toBe(204);
   });
-
-  //= ===========
 });
