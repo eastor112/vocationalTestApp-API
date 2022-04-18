@@ -1,3 +1,4 @@
+const { isObjectIdOrHexString } = require('mongoose');
 const {
   searchUsers,
   searchUniversities,
@@ -5,6 +6,9 @@ const {
   searchResults,
   searchCareers,
   searchOffers,
+  searchQuestionResponse,
+  searchTest,
+  searchQuestions,
 } = require('./search.service');
 
 const handlerUsersSearch = async (req, res) => {
@@ -86,17 +90,35 @@ const handlerBillingsSearch = async (req, res) => {
 };
 
 const handlerQuestionsSearch = async (req, res) => {
+  const { limit = 5, page = 1 } = req.query;
   const { query } = req.params;
-
-  res.json({ msg: 'handlerQuestionsSearch' });
+  try {
+    const questions = await searchQuestions(query, limit, page);
+    return res.json(questions);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
 };
 
 const handlerTestsSearch = async (req, res) => {
   const { query } = req.params;
-
-  res.json({ msg: 'handlerTestsSearch' });
+  try {
+    const test = await searchTest(query);
+    return res.json(test);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
 };
 
+const handlerQuestionResponseSearch = async (req, res) => {
+  const { query } = req.params;
+  try {
+    const questionResponse = await searchQuestionResponse(query);
+    return res.json(questionResponse);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
+};
 module.exports = {
   handlerUsersSearch,
   handlerUniversitiesSearch,
@@ -106,4 +128,5 @@ module.exports = {
   handlerBillingsSearch,
   handlerOffersSearch,
   handlerResultsSearch,
+  handlerQuestionResponseSearch,
 };

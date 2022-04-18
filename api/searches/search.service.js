@@ -5,6 +5,9 @@ const Billing = require('../billings/billings.model');
 const TestResults = require('../testResults/testResults.model');
 const Careers = require('../careers/careers.model');
 const Offers = require('../offers/offers.model');
+const QuestionResponse = require('../questionResponse/questionResponse.model');
+const Tests = require('../vocationalTest/vocationalTest.model');
+const Questions = require('../questions/questions.model');
 
 const searchUsers = async (query, limit, page) => {
   const isMongoId = ObjectId.isValid(query);
@@ -373,6 +376,67 @@ const searchBilling = async (query, target, limit, page) => {
   };
 };
 
+const searchQuestionResponse = async (query, target, limit, page) => {
+  if (ObjectId.isValid(query)) {
+    const questionResponse = await QuestionResponse.findById({ _id: query, state: true });
+    return {
+      totalDocs: questionResponse ? 1 : 0,
+      currentPage: 1,
+      totalPages: 1,
+      results: questionResponse ? [questionResponse] : [],
+    };
+  }
+  return 'Invalid Id';
+};
+
+const searchTest = async (query, target, limit, page) => {
+  if (ObjectId.isValid(query)) {
+    const test = await Tests.findOne({ _id: query, state: true });
+    return {
+      totalDocs: test ? 1 : 0,
+      currentPage: 1,
+      totalPages: 1,
+      results: test ? [test] : [],
+    };
+  }
+  const queryRegex = new RegExp(query, 'i');
+  const criteria = ({ title: queryRegex, state: true });
+  const [total, tests] = await Promise.all([
+    await Tests.countDocuments(criteria),
+    await Tests.find(criteria).limit(limit).skip(limit * (page - 1)),
+  ]);
+  return {
+    totalDocs: total,
+    currentPage: 1,
+    totalPages: Math.ceil(total / 5),
+    results: tests,
+  };
+};
+
+const searchQuestion = async (query, target, limit, page) => {
+  if (ObjectId.isValid(query)) {
+    const question = await Questions.findOne({ _id: query, state: true });
+    return {
+      totalDocs: question ? 1 : 0,
+      currentPage: 1,
+      totalPages: 1,
+      results: question ? [question] : [],
+    };
+  }
+  const queryRegex = new RegExp(query, 'i');
+  const criteria = ({ type: queryRegex, state: true });
+  const [total, questions] = await Promise.all([
+    await Questions.countDocuments(criteria),
+    await Questions.find(criteria).limit(limit).skip(limit * (page - 1)),
+  ]);
+  return {
+    totalDocs: total,
+    currentPage: page,
+    totalPages: Math.ceil(total / limit),
+    results: questions,
+  };
+};
+
 module.exports = {
   searchUsers,
   searchUniversities,
@@ -380,4 +444,7 @@ module.exports = {
   searchResults,
   searchCareers,
   searchOffers,
+  searchQuestionResponse,
+  searchTest,
+  searchQuestion,
 };
