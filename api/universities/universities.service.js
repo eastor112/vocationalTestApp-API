@@ -7,7 +7,7 @@ const getAllUniversities = async (limit, page) => {
     University.find({ state: true })
       .limit(limit)
       .skip(limit * (page - 1))
-      .populate('offer', 'name'),
+      .populate('offer', 'name description'),
   ]);
 
   return {
@@ -20,7 +20,7 @@ const getAllUniversities = async (limit, page) => {
 
 async function getOneUniversity(id) {
   const university = await University.findOne({ _id: id, state: true })
-    .populate('offer', 'name');
+    .populate('offer', 'name description');
 
   if (!university) {
     return null;
