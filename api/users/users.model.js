@@ -102,17 +102,19 @@ UserSchema.pre('save', async function (next) {
 });
 
 UserSchema.pre('findOneAndUpdate', async function (next) {
-  const user = this;
-  const modifiedPassword = user.getUpdate().password;
-  if (modifiedPassword) {
-    try {
-      const salt = await bcrypt.genSalt(10);
-      const hash = await bcrypt.hash(modifiedPassword, salt);
+  if (this.getUpdate()) {
+    const user = this;
+    const modifiedPassword = user.getUpdate().password;
+    if (modifiedPassword) {
+      try {
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(modifiedPassword, salt);
 
-      user.getUpdate().password = hash;
-      return next();
-    } catch (error) {
-      return next(error);
+        user.getUpdate().password = hash;
+        return next();
+      } catch (error) {
+        return next(error);
+      }
     }
   }
   return next();

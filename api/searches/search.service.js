@@ -420,22 +420,73 @@ const searchTest = async (query, target, limit, page) => {
   };
 };
 
-const searchQuestion = async (query, target, limit, page) => {
+const searchQuestions = async (query, target, limit, page) => {
   if (ObjectId.isValid(query)) {
-    const question = await Questions.findOne({ _id: query, state: true });
+    const question = await Questions.findOne({ _id: query, state: true })
+      .populate('test', 'title');
+
+    if (question) {
+      return {
+        totalDocs: question ? 1 : 0,
+        currentPage: 1,
+        totalPages: 1,
+        results: question ? [question] : [],
+      };
+    }
+
+    const [total, questions] = await Promise.all([
+      await Questions.countDocuments({ test: { _id: query }, state: true }),
+      await Questions.find({ test: { _id: query }, state: true })
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('test', 'title'),
+    ]);
+
     return {
-      totalDocs: question ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: question ? [question] : [],
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: questions,
     };
   }
+
   const queryRegex = new RegExp(query, 'i');
-  const criteria = ({ type: queryRegex, state: true });
+
+  if (target === 'type') {
+    const [total, questions] = await Promise.all([
+      Questions.countDocuments({ type: queryRegex, state: true }),
+      Questions.find({ type: queryRegex, state: true })
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('test', 'title'),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: questions,
+    };
+  }
+
+  const criteria = {
+    $or: [
+      { statement: queryRegex },
+      { optionA: queryRegex },
+      { optionB: queryRegex },
+      { optionC: queryRegex },
+      { optionD: queryRegex }],
+    $and: [{ state: true }],
+  };
+
   const [total, questions] = await Promise.all([
-    await Questions.countDocuments(criteria),
-    await Questions.find(criteria).limit(limit).skip(limit * (page - 1)),
+    Questions.countDocuments(criteria),
+    Questions.find(criteria)
+      .limit(limit)
+      .skip(limit * (page - 1))
+      .populate('test', 'title'),
   ]);
+
   return {
     totalDocs: total,
     currentPage: page,
@@ -453,5 +504,5 @@ module.exports = {
   searchOffers,
   searchQuestionResponse,
   searchTest,
-  searchQuestion,
+  searchQuestions,
 };

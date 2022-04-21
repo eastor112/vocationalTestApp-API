@@ -9,7 +9,7 @@ const QuestionSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: ['BINARI', 'MULTIPLE'],
-    required: true,
+    default: 'MULTIPLE',
   },
   statement: {
     type: String,

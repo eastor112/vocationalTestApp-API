@@ -4,6 +4,7 @@ const TestResultsSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
   test: {
     type: mongoose.Schema.Types.ObjectId,
@@ -16,10 +17,6 @@ const TestResultsSchema = new mongoose.Schema({
   careers: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Career',
-  }],
-  questionResponses: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'QuestionResponse',
   }],
   state: {
     type: Boolean,

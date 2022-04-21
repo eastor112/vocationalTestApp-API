@@ -90,10 +90,11 @@ const handlerResultsSearch = async (req, res) => {
 };
 
 const handlerQuestionsSearch = async (req, res) => {
-  const { limit = 5, page = 1 } = req.query;
+  const { target, limit = 5, page = 1 } = req.query;
   const { query } = req.params;
+
   try {
-    const questions = await searchQuestions(query, limit, page);
+    const questions = await searchQuestions(query, target, limit, page);
     return res.json(questions);
   } catch (error) {
     return res.status(500).json({ msg: error.message });

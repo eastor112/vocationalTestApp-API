@@ -1,21 +1,18 @@
 const mongoose = require('mongoose');
 
 const QuestionResponseSchema = new mongoose.Schema({
-  test: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Test',
-  },
   question: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Test',
+    ref: 'Question',
   },
   userResponse: {
     type: String,
+    enum: ['A', 'B', 'C', 'D'],
     required: true,
   },
-  testDone: {
+  testResult: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'TestDone',
+    ref: 'TestResult',
   },
   state: {
     type: Boolean,
