@@ -17,10 +17,6 @@ const TestResultsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Career',
   }],
-  questionResponses: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'QuestionResponse',
-  }],
   state: {
     type: Boolean,
     default: true,
