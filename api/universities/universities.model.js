@@ -33,6 +33,12 @@ const UniversitySchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  socialMedia: {
+    linkedIn: String,
+    facebook: String,
+    twitter: String,
+    instagram: String,
+  },
 }, {
   timestamps: true,
 });
