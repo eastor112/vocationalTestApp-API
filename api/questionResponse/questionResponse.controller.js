@@ -1,4 +1,5 @@
-const { geTAllQuestionsResponse, getOneQuestionResponse, createQuestionResponse, updateQuestionResponse, deleteQuestionResponse } = require('./questionResponse.service');
+const QuestionResponse = require('./questionResponse.model');
+const { geTAllQuestionsResponse, getOneQuestionResponse, createQuestionResponse, updateQuestionResponse, deleteQuestionResponse, createQuestionResponseMultiple } = require('./questionResponse.service');
 
 const handlerGeTAllQuestionsResponse = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
@@ -34,7 +35,15 @@ const handlerCreateQuestionResponse = async (req, res) => {
 };
 
 const handlerCreateQuestionResponseMultiple = async (req, res) => {
-  res.json({ msg: 'Not implemented yet' });
+  const questionResponses = req.body;
+
+  try {
+    const docs = await createQuestionResponseMultiple(questionResponses);
+
+    return res.json(docs);
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
+  }
 };
 
 const handlerUpdateQuestionResponse = async (req, res) => {

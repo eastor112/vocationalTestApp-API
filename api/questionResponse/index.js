@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const { check } = require('express-validator');
 const { questionResponseExistById } = require('../../helpers/customValidators');
-const { hasRoleMw, validateJwtMw, fieldsValidatorMw } = require('../../middlewares');
+const { validateJwtMw, fieldsValidatorMw } = require('../../middlewares');
 
 const router = Router();
 const {
@@ -14,7 +14,6 @@ const {
 } = require('./questionResponse.controller');
 
 router.get('/', [
-  hasRoleMw,
   validateJwtMw,
 ], handlerGeTAllQuestionsResponse);
 

@@ -25,8 +25,10 @@ const createQuestionResponse = async (rest) => {
   return questionResponse;
 };
 
-const createQuestionResponseMultiple = async (rest) => {
+const createQuestionResponseMultiple = async (questionResponses) => {
+  const createdQuestionsResponses = await QuestionResponse.insertMany(questionResponses);
 
+  return createdQuestionsResponses;
 };
 
 const updateQuestionResponse = async (id, rest) => {
