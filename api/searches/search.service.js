@@ -316,7 +316,7 @@ const searchResults = async (query, target, limit, page) => {
           await TestResults.countDocuments({ user: { _id: query }, state: true }),
           await TestResults.find({ user: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('test', 'title'),
+            .populate('test', '-state -__v'),
         ]);
 
         return {

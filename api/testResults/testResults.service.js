@@ -21,7 +21,7 @@ const getAllTestResults = async (limit, page) => {
 const getOneTestResults = async (id) => {
   const testResult = await TestResults.findById(id)
     .populate('user', 'names email')
-    .populate('test', 'type numberOfQuestions');
+    .populate('test', '-state -__v');
 
   return testResult;
 };
