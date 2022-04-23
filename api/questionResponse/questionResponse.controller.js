@@ -40,7 +40,7 @@ const handlerCreateQuestionResponseMultiple = async (req, res) => {
   try {
     const docs = await createQuestionResponseMultiple(questionResponses);
 
-    return res.json(docs);
+    return res.status(201).json(docs);
   } catch (error) {
     return res.status(500).json({ msg: error.message });
   }

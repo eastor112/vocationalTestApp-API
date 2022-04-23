@@ -62,17 +62,17 @@ const initialCareers = [{
 
 const initialTests = [{
   title: 'Test 1',
-  type: 'VOCATIONAL',
+  type: 'FREE',
   numberOfQuestions: 15,
   estimatedTime: 15,
 }, {
   title: 'Test 2',
-  type: 'SURVEY',
+  type: 'PREMIUM',
   numberOfQuestions: 80,
   estimatedTime: 80,
 }, {
   title: 'Test 3',
-  type: 'VOCATIONAL',
+  type: 'FREE',
   numberOfQuestions: 30,
   estimatedTime: 30,
 }];

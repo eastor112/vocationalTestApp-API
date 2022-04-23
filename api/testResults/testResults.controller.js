@@ -42,7 +42,7 @@ const handlerCreateTestResults = async (req, res) => {
     return res.status(201).json(testResult);
   } catch (error) {
     return res.status(500).json({
-      msg: 'Error creating TestResult',
+      msg: error.message,
     });
   }
 };

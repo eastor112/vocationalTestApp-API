@@ -7,8 +7,8 @@ const TestSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['SURVEY', 'VOCATIONAL'],
-    default: 'VOCATIONAL',
+    enum: ['FREE', 'PREMIUM'],
+    default: 'FREE',
   },
   descriptions: {
     A: {

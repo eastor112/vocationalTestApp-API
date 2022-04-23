@@ -10,6 +10,13 @@ const TestResultsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Test',
   },
+  answers: {
+    A: Number,
+    B: Number,
+    C: Number,
+    D: Number,
+    E: Number,
+  },
   firstOption: {
     type: String,
     enum: ['A', 'B', 'C', 'D', 'E'],
