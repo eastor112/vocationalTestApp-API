@@ -2,12 +2,17 @@ const QuestionResponse = require('./questionResponse.model');
 
 const geTAllQuestionsResponse = async (limit, page) => {
   const [total, questionResponse] = await Promise.all([
-    await QuestionResponse.countDocuments({ state: true }),
-    await QuestionResponse.find({ state: true })
+    QuestionResponse.countDocuments({ state: true }),
+    QuestionResponse.find({ state: true })
       .limit(limit)
       .skip((page - 1) * limit),
   ]);
-  return { total, questionResponse };
+  return {
+    totalDocs: total,
+    currentPage: Number(page),
+    totalPages: Math.ceil(total / limit),
+    questionResponse,
+  };
 };
 
 const getOneQuestionResponse = async (id) => {
@@ -18,6 +23,10 @@ const getOneQuestionResponse = async (id) => {
 const createQuestionResponse = async (rest) => {
   const questionResponse = await QuestionResponse.create(rest);
   return questionResponse;
+};
+
+const createQuestionResponseMultiple = async (rest) => {
+
 };
 
 const updateQuestionResponse = async (id, rest) => {
@@ -35,6 +44,7 @@ module.exports = {
   geTAllQuestionsResponse,
   getOneQuestionResponse,
   createQuestionResponse,
+  createQuestionResponseMultiple,
   updateQuestionResponse,
   deleteQuestionResponse,
 };

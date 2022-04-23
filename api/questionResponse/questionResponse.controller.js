@@ -3,14 +3,10 @@ const { geTAllQuestionsResponse, getOneQuestionResponse, createQuestionResponse,
 const handlerGeTAllQuestionsResponse = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
   try {
-    const { total, questionResponse } = await geTAllQuestionsResponse(limit, page);
-    res.json({
-      totalDocs: total,
-      currentPage: Number(page),
-      questionResponse,
-    });
+    const questionResponses = await geTAllQuestionsResponse(limit, page);
+    res.json(questionResponses);
   } catch (error) {
-    res.status(500).json({ msg: 'Error in the server' });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -33,8 +29,12 @@ const handlerCreateQuestionResponse = async (req, res) => {
     const questionResponse = await createQuestionResponse(rest);
     res.json(questionResponse);
   } catch (error) {
-    rest.status(500).json({ msg: 'Error in the server' });
+    res.status(500).json({ msg: error.message });
   }
+};
+
+const handlerCreateQuestionResponseMultiple = async (req, res) => {
+  res.json({ msg: 'Not implemented yet' });
 };
 
 const handlerUpdateQuestionResponse = async (req, res) => {
@@ -62,6 +62,7 @@ module.exports = {
   handlerGeTAllQuestionsResponse,
   handlerGetOneQuestionResponse,
   handlerCreateQuestionResponse,
+  handlerCreateQuestionResponseMultiple,
   handlerUpdateQuestionResponse,
   handlerDeleteQuestionResponse,
 };

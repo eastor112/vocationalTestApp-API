@@ -87,7 +87,6 @@ describe('Searches enpoints tests', () => {
         ...initialTestResults[0],
         user: userUid,
         test: testId,
-        careers: [careerId],
       });
 
     testResultId = response.body.id;
@@ -337,7 +336,7 @@ describe('Searches enpoints tests', () => {
 
     expect(response.status).toBe(200);
     expect(response.body.totalDocs).toBe(1);
-    expect(response.body.results[0].test).toBe(testId);
+    expect(response.body.results[0].id).toBe(testResultId);
   });
 
   test('should not search a testResult with a invalid id', async () => {
@@ -367,18 +366,6 @@ describe('Searches enpoints tests', () => {
 
     expect(response.status).toBe(200);
     expect(testIds).toContain(testId);
-  });
-
-  test('should search testResults by career id', async () => {
-    const response = await request
-      .get(`/api/search/results/${careerId}?target=careers`)
-      .set('Authorization', `Bearer ${token}`);
-
-    const arrayCareersIds = response.body.results.map((result) => result.careers.map((c) => c._id));
-    const careersIds = arrayCareersIds.reduce((acc, curr) => acc.concat(curr), []);
-
-    expect(response.status).toBe(200);
-    expect(careersIds).toContain(careerId);
   });
 
   test('should not search testResults wwhit an invalid target', async () => {

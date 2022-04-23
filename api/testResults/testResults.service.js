@@ -7,8 +7,7 @@ const getAllTestResults = async (limit, page) => {
       .limit(limit)
       .skip(limit * (page - 1))
       .populate('user', 'names email')
-      .populate('test', 'name description')
-      .populate('careers', 'name description'),
+      .populate('test', 'name description'),
   ]);
 
   return {
@@ -22,8 +21,7 @@ const getAllTestResults = async (limit, page) => {
 const getOneTestResults = async (id) => {
   const testResult = await TestResults.findById(id)
     .populate('user', 'names email')
-    .populate('test', 'name description')
-    .populate('careers', 'name description');
+    .populate('test', 'name description');
 
   return testResult;
 };
@@ -37,8 +35,7 @@ const createTestResults = async (data) => {
 const updateTestResults = async (id, data) => {
   const testResult = await TestResults.findOneAndUpdate({ _id: id }, data, { new: true })
     .populate('user', 'names email')
-    .populate('test', 'name description')
-    .populate('careers', 'name description');
+    .populate('test', 'name description');
 
   return testResult;
 };

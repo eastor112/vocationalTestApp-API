@@ -63,27 +63,33 @@ const initialCareers = [{
 const initialTests = [{
   title: 'Test 1',
   type: 'VOCATIONAL',
+  numberOfQuestions: 15,
+  estimatedTime: 15,
 }, {
   title: 'Test 2',
   type: 'SURVEY',
+  numberOfQuestions: 80,
+  estimatedTime: 80,
 }, {
   title: 'Test 3',
   type: 'VOCATIONAL',
+  numberOfQuestions: 30,
+  estimatedTime: 30,
 }];
 
 const initialQuestions = [{
   test: null,
-  type: 'BINARI',
+  type: 'MULTIPLE-2',
   statement: 'What is Jest?',
   optionA: 'JavaScript Testing Framework',
 }, {
   test: null,
-  type: 'MULTIPLE',
+  type: 'MULTIPLE-4',
   statement: 'What is react?',
   optionA: 'JavaScript front-end Framework',
 }, {
   test: null,
-  type: 'BINARI',
+  type: 'MULTIPLE-3',
   statement: 'What is redux?',
   optionA: 'JavaScript front-end Framework',
 }];
@@ -156,21 +162,18 @@ const initialOffers = [{
 const initialTestResults = [{
   user: null,
   test: null,
-  description: 'This is a description 1',
-  careers: [],
-  questionResponses: [],
+  firstOption: 'A',
+  secondOption: 'B',
 }, {
   user: null,
   test: null,
-  description: 'This is a description 2',
-  careers: [],
-  questionResponses: [],
+  firstOption: 'C',
+  secondOption: 'D',
 }, {
   user: null,
   test: null,
-  description: 'This is a description 3',
-  careers: [],
-  questionResponses: [],
+  firstOption: 'A',
+  secondOption: 'C',
 }];
 
 module.exports = {
