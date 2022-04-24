@@ -1,4 +1,13 @@
-const { getAllTestResults, getOneTestResults, createTestResults, updateTestResults, deleteTestResults } = require('./testResults.service');
+const { toLocalTime } = require('../../utils/dates');
+const { sendMailWithSengrid } = require('../../utils/email');
+const { reportEmailTemplate } = require('../../utils/emailsTemplates');
+const {
+  getAllTestResults,
+  getOneTestResults,
+  createTestResults,
+  updateTestResults,
+  deleteTestResults,
+} = require('./testResults.service');
 
 const handlerGetAllTestResults = async (req, res) => {
   const { limit = 5, page = 1 } = req.query;
@@ -38,6 +47,12 @@ const handlerCreateTestResults = async (req, res) => {
 
   try {
     const testResult = await createTestResults(rest);
+
+    if (process.env.NODE_ENV !== 'test') {
+      const emailTemplate = reportEmailTemplate(req.user.email, testResult);
+
+      await sendMailWithSengrid(emailTemplate);
+    }
 
     return res.status(201).json(testResult);
   } catch (error) {
