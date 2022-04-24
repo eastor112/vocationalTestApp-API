@@ -10,14 +10,21 @@ const TestResultsSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Test',
   },
-  description: {
-    type: String,
-    default: '',
+  answers: {
+    A: Number,
+    B: Number,
+    C: Number,
+    D: Number,
+    E: Number,
   },
-  careers: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Career',
-  }],
+  firstOption: {
+    type: String,
+    enum: ['A', 'B', 'C', 'D', 'E'],
+  },
+  secondOption: {
+    type: String,
+    enum: ['A', 'B', 'C', 'D', 'E'],
+  },
   state: {
     type: Boolean,
     default: true,

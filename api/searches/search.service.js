@@ -301,7 +301,7 @@ const searchResults = async (query, target, limit, page) => {
       case undefined:
         results = await TestResults.findOne({ _id: query, state: true })
           .populate('user', 'names email')
-          .populate('careers', 'name');
+          .populate('test', 'title');
 
         return {
           totalDocs: results ? 1 : 0,
@@ -316,8 +316,7 @@ const searchResults = async (query, target, limit, page) => {
           await TestResults.countDocuments({ user: { _id: query }, state: true }),
           await TestResults.find({ user: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('careers', 'name')
-            .populate('test', 'title'),
+            .populate('test', '-state -__v'),
         ]);
 
         return {
@@ -332,39 +331,6 @@ const searchResults = async (query, target, limit, page) => {
           await TestResults.countDocuments({ test: { _id: query }, state: true }),
           await TestResults.find({ test: { _id: query }, state: true })
             .populate('user', 'names email')
-            .populate('careers', 'name')
-            .populate('test', 'title'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: Number(page),
-          totalPages: Math.ceil(total / limit),
-          results,
-        };
-
-      case 'careers':
-        [total, results] = await Promise.all([
-          await TestResults.countDocuments({ careers: { _id: query }, state: true }),
-          await TestResults.find({ careers: { _id: query }, state: true })
-            .populate('user', 'names email')
-            .populate('careers', 'name')
-            .populate('test', 'title'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: Number(page),
-          totalPages: Math.ceil(total / limit),
-          results,
-        };
-
-      case 'question':
-        [total, results] = await Promise.all([
-          await TestResults.countDocuments({ questionResponse: { _id: query }, state: true }),
-          await TestResults.find({ questionResponse: { _id: query }, state: true })
-            .populate('user', 'names email')
-            .populate('careers', 'name')
             .populate('test', 'title'),
         ]);
 
@@ -376,7 +342,7 @@ const searchResults = async (query, target, limit, page) => {
         };
 
       default:
-        throw new Error('Target is not in [user, test, careers, question]');
+        throw new Error('Target is not in [user, test]');
     }
   }
 

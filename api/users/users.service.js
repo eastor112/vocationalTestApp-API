@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { sendMailWithSengrid } = require('../../utils/email');
 const User = require('./users.model');
 const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
+const { activateEmailTemplate } = require('../../utils/emailsTemplates');
 
 const getAllUsers = async (limit, page) => {
   const query = {};
@@ -43,17 +44,9 @@ const createUser = async (user) => {
   await newUser.save();
 
   if (process.env.NODE_ENV !== 'test') {
-    const email = {
-      from: 'no reply <easto@unitru.edu.pe>',
-      to: newUser.email,
-      subject: 'Activate your account',
-      template_id: process.env.EMAIL_TEMPLATE_ID,
-      dynamic_template_data: {
-        url: `${process.env.NODE_ENV === 'develop' ? process.env.BASE_URL_DEV : process.env.BASE_URL_PROD}/activate/${newUser.passResetToken}`,
-      },
-    };
+    const emailTemplate = activateEmailTemplate(newUser.email, newUser.passResetToken);
 
-    await sendMailWithSengrid(email);
+    await sendMailWithSengrid(emailTemplate);
   }
 
   return newUser;

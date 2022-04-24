@@ -19,7 +19,7 @@ function routes(app) {
   app.use('/api/questions', questions);
   app.use('/api/tests', vocationalTest);
   app.use('/api/results', testResults);
-  app.use('/api/questionResponse', questionResponse);
+  app.use('/api/responses', questionResponse);
   app.use('/api/testresults', testResults);
   app.use('/api/billings', billings);
   app.use('/api/search', search);

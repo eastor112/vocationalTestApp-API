@@ -32,7 +32,7 @@ const handlerCreateTest = async (req, res) => {
     const test = await createTest(rest);
     return res.status(201).json(test);
   } catch (error) {
-    return res.status(500).json({ msg: 'Error creating test' });
+    return res.status(500).json({ msg: error.message });
   }
 };
 

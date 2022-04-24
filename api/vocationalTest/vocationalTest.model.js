@@ -7,8 +7,40 @@ const TestSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['SURVEY', 'VOCATIONAL'],
-    default: 'VOCATIONAL',
+    enum: ['FREE', 'PREMIUM'],
+    default: 'FREE',
+  },
+  descriptions: {
+    A: {
+      type: String,
+    },
+    B: {
+      type: String,
+    },
+    C: {
+      type: String,
+    },
+    D: {
+      type: String,
+    },
+    E: {
+      type: String,
+    },
+  },
+  results: {
+    A: [String],
+    B: [String],
+    C: [String],
+    D: [String],
+    E: [String],
+  },
+  numberOfQuestions: {
+    type: Number,
+    required: true,
+  },
+  estimatedTime: {
+    type: Number,
+    required: true,
   },
   state: {
     type: Boolean,

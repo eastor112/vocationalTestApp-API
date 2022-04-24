@@ -8,8 +8,8 @@ const QuestionSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ['BINARI', 'MULTIPLE'],
-    default: 'MULTIPLE',
+    enum: ['MULTIPLE-2', 'MULTIPLE-3', 'MULTIPLE-4', 'MULTIPLE-5'],
+    default: 'MULTIPLE-4',
   },
   statement: {
     type: String,
@@ -25,6 +25,9 @@ const QuestionSchema = new mongoose.Schema({
     type: String,
   },
   optionD: {
+    type: String,
+  },
+  optionE: {
     type: String,
   },
   state: {

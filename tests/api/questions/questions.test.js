@@ -6,29 +6,26 @@ const connectDB = require('../../../config/database');
 const Tests = require('../../../api/vocationalTest/vocationalTest.model');
 const Questions = require('../../../api/questions/questions.model');
 const Users = require('../../../api/users/users.model');
+const { initialTests } = require('../../testHelpers/initialData');
 
 const request = supertest(app);
 
 let initialQuestions = [
   {
     test: null,
-    type: 'BINARI',
+    type: 'MULTIPLE-2',
     statement: 'What is Jest?',
     optionA: 'JavaScript Testing Framework',
   }, {
     test: null,
-    type: 'MULTIPLE',
+    type: 'MULTIPLE-4',
     statement: 'What is react?',
     optionA: 'JavaScript front-end Framework',
   },
 ];
 
-const initialTest = {
-  title: 'Test 1',
-};
-
 const adminUser = {
-  name: 'admin',
+  names: 'admin',
   email: 'admin@test.com',
   password: '123456',
   role: 'ADMIN',
@@ -60,7 +57,7 @@ describe('Questions enpoints tests', () => {
     response = await request
       .post('/api/tests')
       .set('Authorization', `Bearer ${token}`)
-      .send(initialTest);
+      .send(initialTests[0]);
 
     idTest = response.body.id;
 
