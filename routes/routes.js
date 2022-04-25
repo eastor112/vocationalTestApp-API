@@ -10,6 +10,7 @@ const careers = require('../api/careers');
 const questions = require('../api/questions');
 const vocationalTest = require('../api/vocationalTest');
 const questionResponse = require('../api/questionResponse');
+const checkout = require('../api/checkout');
 
 function routes(app) {
   app.use('/api/careers', careers);
@@ -25,6 +26,7 @@ function routes(app) {
   app.use('/api/search', search);
   app.use('/auth/local/login', localAuth);
   app.use('/auth/google/login', googleAuth);
+  app.use('/api/checkout', checkout);
 }
 
 module.exports = routes;

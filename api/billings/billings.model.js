@@ -24,6 +24,10 @@ const BillingSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+  fees: {
+    type: Number,
+    default: 0,
+  },
   paymentMethod: {
     type: String,
     enum: ['CREDIT CARD', 'DEBIT CARD', 'PAYPAL'],
@@ -36,8 +40,8 @@ const BillingSchema = new mongoose.Schema({
   },
   condition: {
     type: String,
-    enum: ['PENDING', 'COMPLETED', 'CANCELED'],
-    default: 'PENDING',
+    enum: ['COMPLETED', 'REFUNDED'],
+    default: 'COMPLETED',
   },
 }, {
   timestamps: true,

@@ -36,6 +36,12 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  history: [mongoose.Schema.Types.ObjectId],
+  premium: {
+    type: String,
+    enum: ['ACTIVE', 'INACTIVE'],
+    default: 'INACTIVE',
+  },
   address: {
     country: {
       type: String,
