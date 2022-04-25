@@ -1,18 +1,28 @@
 const Stripe = require('stripe');
 
+const Checkout = require('./checkout.model');
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 async function makePayment({ paymentMethod, amount }) {
   const { id } = paymentMethod;
 
   try {
-    const payment = stripe.paymentIntents.create({
+    const payment = await stripe.paymentIntents.create({
       payment_method: id,
       amount,
       currency: 'usd',
       confirm: true,
       description: 'Vocational Test payment',
     });
+    const registeredPayment = {
+      refId: payment.id,
+      description: payment.description,
+      value: payment.amount,
+      currency: payment.currency,
+    };
+
+    await Checkout.create(registeredPayment);
 
     return payment;
   } catch (error) {
@@ -21,6 +31,11 @@ async function makePayment({ paymentMethod, amount }) {
   }
 }
 
+function createPayment(payment) {
+  return Checkout.create(payment);
+}
+
 module.exports = {
   makePayment,
+  createPayment,
 };
