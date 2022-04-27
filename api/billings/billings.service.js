@@ -1,3 +1,4 @@
+const User = require('../users/users.model');
 const Billing = require('./billings.model');
 
 const getAllBillings = async (limit, page) => {
@@ -26,6 +27,20 @@ const getOneBilling = async (id) => {
 };
 
 const createBilling = async (newBilling) => {
+  const user = await User.findOne({ _id: newBilling.user });
+
+  if (user.purchasedTests) {
+    const existingTest = user.purchasedTests.find((pt) => pt === newBilling.test);
+
+    if (existingTest) {
+      throw new Error('User already purchased this test');
+    }
+  } else {
+    user.purchasedTests = [];
+    user.purchasedTests.push(newBilling.test);
+    await user.save();
+  }
+
   const billing = await Billing.create(newBilling);
 
   return billing;

@@ -29,11 +29,21 @@ const handlerGetOneBilling = async (req, res) => {
 const handlerCreateBilling = async (req, res) => {
   const { _id, state, __v, updatedAt, createdAt, transactionNumber, ...rest } = req.body;
 
+  const existingTest = req.user.purchasedTests.find((pt) => pt.toString() === rest.testId);
+
+  if (existingTest) {
+    return res.status(400).json({ msg: 'User already purchased this test' });
+  }
+  req.user.purchasedTests = [...req.user.purchasedTests, rest.testId];
+
+  await req.user.save();
+
   try {
     const billing = await createBilling(rest);
-    res.status(201).json(billing);
+
+    return res.status(201).json(billing);
   } catch (error) {
-    res.status(500).json(error);
+    return res.status(500).json(error.message);
   }
 };
 
