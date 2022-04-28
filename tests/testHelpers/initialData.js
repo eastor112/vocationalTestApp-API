@@ -7,13 +7,19 @@ const adminUser = {
 
 const initialBillings = [{
   paymentMethod: 'CREDIT CARD',
-  condition: 'PENDING',
+  condition: 'REFUNDED',
+  description: 'description1',
+  amount: '100',
 }, {
   paymentMethod: 'DEBIT CARD',
   condition: 'COMPLETED',
+  description: 'description2',
+  amount: '200',
 }, {
   paymentMethod: 'PAYPAL',
-  condition: 'CANCELED',
+  condition: 'COMPLETED',
+  description: 'description3',
+  amount: '300',
 }];
 
 const initialCareers = [{

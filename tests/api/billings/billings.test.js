@@ -17,15 +17,20 @@ const adminUser = {
 
 let initialBillings = [{
   paymentMethod: 'CREDIT CARD',
+  description: 'description1',
+  amount: '100',
 }, {
   paymentMethod: 'DEBIT CARD',
+  description: 'description2',
+  amount: '200',
 }, {
   paymentMethod: 'PAYPAL',
+  description: 'description3',
+  amount: '300',
 }];
 
 let token = '';
 let idBilling = '';
-
 describe('Billings enpoints tests', () => {
   beforeAll(async () => {
     await connectDB();
