@@ -14,11 +14,15 @@ const BillingSchema = new mongoose.Schema({
   },
   description: {
     type: String,
-    default: '',
+    required: true,
   },
   amount: {
     type: Number,
-    default: 0,
+    required: true,
+  },
+  testId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Test',
   },
   taxes: {
     type: Number,
