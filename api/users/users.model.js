@@ -66,6 +66,9 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  cardNumber: {
+
+  },
   university: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'University',

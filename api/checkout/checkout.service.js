@@ -15,14 +15,6 @@ async function makePayment({ paymentMethod, amount }) {
       confirm: true,
       description: 'Vocational Test payment',
     });
-    const registeredPayment = {
-      refId: payment.id,
-      description: payment.description,
-      value: payment.amount,
-      currency: payment.currency,
-    };
-
-    await Checkout.create(registeredPayment);
 
     return payment;
   } catch (error) {
