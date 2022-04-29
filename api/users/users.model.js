@@ -66,8 +66,17 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  cardNumber: {
-
+  payment: {
+    customerId: String,
+    cards: [{
+      paymentMethodId: String,
+      brand: String,
+      country: String,
+      exp_month: Number,
+      exp_year: Number,
+      funding: String,
+      last4: String,
+    }],
   },
   university: {
     type: mongoose.Schema.Types.ObjectId,
