@@ -36,7 +36,10 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
-  history: [mongoose.Schema.Types.ObjectId],
+  purchasedTests: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Test',
+  }],
   premium: {
     type: String,
     enum: ['ACTIVE', 'INACTIVE'],
