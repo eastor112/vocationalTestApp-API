@@ -4,7 +4,22 @@ const Checkout = require('./checkout.model');
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-async function makePayment({ paymentMethod, amount }) {
+async function createCustomer(user, paymentMethod) {
+  try {
+    const customer = await stripe.customers.create({
+      email: user.email,
+      name: `${user.names} ${user.fatherName}`,
+      payment_method: paymentMethod.id,
+    });
+
+    return customer;
+  } catch (error) {
+    console.log('error', error);
+    throw error;
+  }
+}
+
+async function makePayment({ paymentMethod, amount, customer }) {
   const { id } = paymentMethod;
 
   try {
@@ -14,15 +29,9 @@ async function makePayment({ paymentMethod, amount }) {
       currency: 'usd',
       confirm: true,
       description: 'Vocational Test payment',
+      customer: customer.id,
+      receipt_email: customer.email,
     });
-    const registeredPayment = {
-      refId: payment.id,
-      description: payment.description,
-      value: payment.amount,
-      currency: payment.currency,
-    };
-
-    await Checkout.create(registeredPayment);
 
     return payment;
   } catch (error) {
@@ -36,6 +45,7 @@ function createPayment(payment) {
 }
 
 module.exports = {
+  createCustomer,
   makePayment,
   createPayment,
 };
