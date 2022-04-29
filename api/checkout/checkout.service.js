@@ -30,7 +30,7 @@ async function makePayment({ paymentMethod, amount, customer }) {
       confirm: true,
       description: 'Vocational Test payment',
       customer: customer.id,
-      // receipt_email: customer.email,
+      receipt_email: customer.email,
     });
 
     return payment;
