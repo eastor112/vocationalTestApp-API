@@ -7,6 +7,7 @@ const { validateJwtMw } = require('../../middlewares/tokenValidator');
 const upload = require('../../config/multer');
 
 const {
+  handlerGetAllCareersNames,
   handlerGetAllCareers,
   handlerGetOneCareer,
   handlerCreateCareer,
@@ -15,6 +16,8 @@ const {
 } = require('./careers.controller');
 
 const router = Router();
+
+router.get('/names', handlerGetAllCareersNames);
 
 router.get('/', [], handlerGetAllCareers);
 

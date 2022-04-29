@@ -1,5 +1,6 @@
 const Careers = require('./careers.model');
 const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
+const CareersNames = require('../../commonModels/careersNames');
 
 const getAllCareers = async (limit, page) => {
   const [total, careers] = await Promise.all([
@@ -24,6 +25,8 @@ const getOneCareer = async (id) => {
 
 const createCareer = async (rest) => {
   const career = await Careers.create(rest);
+  await CareersNames.create({ name: career.name });
+
   return career;
 };
 
@@ -33,6 +36,8 @@ const updateCareer = async (id, rest) => {
   if (rest.photo) cleanCloudinary(careerOld.photo, 'careers');
 
   const career = await Careers.findByIdAndUpdate(id, rest, { new: true });
+  await CareersNames.findOneAndUpdate({ name: careerOld.name }, { name: career.name });
+
   return career;
 };
 
