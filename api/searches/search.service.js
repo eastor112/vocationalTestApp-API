@@ -75,73 +75,200 @@ const searchUsers = async (query, limit, page) => {
   };
 };
 
-const searchUniversities = async (query, limit, page, target) => {
-  const isMongoId = ObjectId.isValid(query);
+const searchUniversities = async (
+  name,
+  country,
+  career,
+  limit,
+  page,
+) => {
+  const nameRegex = new RegExp(name, 'i');
+  const careerRegex = new RegExp(career, 'i');
+  const countryRegex = new RegExp(country, 'i');
 
-  if (isMongoId) {
-    const university = await University.findOne({ _id: query, state: true });
+  if (country === '' && career === '' && name !== '') {
+    // only name
+    const [total, universities] = await Promise.all([
+      University.countDocuments({ name: nameRegex, state: true }),
+      University.find({ name: nameRegex, state: true })
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
 
     return {
-      totalDocs: university ? 1 : 0,
-      currentPage: 1,
-      totalPages: 1,
-      results: university ? [university] : [],
-    };
-  }
-
-  if (target === 'country') {
-    const universities = await University.find({ 'address.country': query, state: true })
-      .limit(limit)
-      .skip(limit * (page - 1))
-      .populate('offer', 'name')
-      .sort({ 'ranking.national': 1 });
-
-    return {
-      totalDocs: universities.length,
+      totalDocs: total,
       currentPage: Number(page),
-      totalPages: Math.ceil(universities.length / limit),
+      totalPages: Math.ceil(total / limit),
       results: universities,
     };
-  }
+  } if (country === '' && career !== '' && name === '') {
+    // only career
+    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
 
-  const queryRegex = new RegExp(query, 'i');
-
-  if (target === 'name') {
-    const universities = await University.find({ name: queryRegex, state: true })
-      .limit(limit)
-      .skip(limit * (page - 1))
-      .populate('offer', 'name')
-      .sort({ 'ranking.national': 1 });
-
-    return {
-      totalDocs: universities.length,
-      currentPage: Number(page),
-      totalPages: Math.ceil(universities.length / limit),
-      results: universities,
-    };
-  }
-
-  // this is not working
-  if (target === 'career') {
-    const offers = await Offer.find({ name: queryRegex, state: true }, 'university');
-
-    const universities = await University.find({
+    const criteria = {
       _id: { $in: offers.map((offer) => offer.university) },
       state: true,
-    }).limit(limit)
-      .skip(limit * (page - 1))
-      .populate('offer', 'name')
-      .sort({ 'ranking.national': 1 });
+    };
+
+    const [total, universities] = await Promise.all([
+      University.countDocuments(criteria),
+      University.find(criteria)
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
 
     return {
-      totalDocs: universities.length,
+      totalDocs: total,
       currentPage: Number(page),
-      totalPages: Math.ceil(universities.length / limit),
+      totalPages: Math.ceil(total / limit),
+      results: universities,
+    };
+  } if (country !== '' && career === '' && name === '') {
+    // only country
+    const [total, universities] = await Promise.all([
+      await University.countDocuments({ 'address.country': countryRegex, state: true }),
+      await University.find({ 'address.country': countryRegex, state: true })
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: universities,
+    };
+  } if (country === '' && career !== '' && name !== '') {
+    // only name and career
+    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+
+    const criteria = {
+      _id: { $in: offers.map((offer) => offer.university) },
+      name: nameRegex,
+      state: true,
+    };
+
+    const [total, universities] = await Promise.all([
+      University.countDocuments(criteria),
+      University.find(criteria)
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: universities,
+    };
+  } if (country !== '' && career !== '' && name === '') {
+    // only country and career
+    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+
+    const criteria = {
+      _id: { $in: offers.map((offer) => offer.university) },
+      'address.country': countryRegex,
+      state: true,
+    };
+
+    const [total, universities] = await Promise.all([
+      University.countDocuments(criteria),
+      University.find(criteria)
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: universities,
+    };
+  } if (country !== '' && career === '' && name !== '') {
+    // only country and name
+
+    const criteria = {
+      name: nameRegex,
+      'address.country': countryRegex,
+      state: true,
+    };
+
+    const [total, universities] = await Promise.all([
+      await University.countDocuments(criteria),
+      await University.find(criteria)
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: universities,
+    };
+  } if (country !== '' && career !== '' && name !== '') {
+    // all
+    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+
+    const criteria = {
+      _id: { $in: offers.map((offer) => offer.university) },
+      name: nameRegex,
+      'address.country': countryRegex,
+      state: true,
+    };
+
+    const [total, universities] = await Promise.all([
+      University.countDocuments(criteria),
+      University.find(criteria)
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      results: universities,
+    };
+  } if (country === '' && career === '' && name === '') {
+    // all
+    const [total, universities] = await Promise.all([
+      University.countDocuments({ state: true }),
+      University.find({ state: true })
+        .limit(limit)
+        .skip(limit * (page - 1))
+        .populate('offer', 'name')
+        .sort({ 'ranking.national': 1 }),
+    ]);
+
+    return {
+      totalDocs: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
       results: universities,
     };
   }
 
-  throw new Error('Invalid target');
+  return {
+    totalDocs: 0,
+    currentPage: 0,
+    totalPages: 0,
+    results: [],
+  };
 };
 
 const searchCareers = async (query, limit, page) => {

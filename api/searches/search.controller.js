@@ -10,6 +10,8 @@ const {
   searchTest,
   searchQuestions,
 } = require('./search.service');
+const University = require('../universities/universities.model');
+const Offer = require('../offers/offers.model');
 
 const handlerUsersSearch = async (req, res) => {
   const { query } = req.params;
@@ -25,11 +27,16 @@ const handlerUsersSearch = async (req, res) => {
 };
 
 const handlerUniversitiesSearch = async (req, res) => {
-  const { query } = req.params;
-  const { limit = 5, page = 1, target, order } = req.query;
+  const { name = '', country = '', career = '', limit = 5, page = 1 } = req.query;
 
   try {
-    const universities = await searchUniversities(query, limit, page, target);
+    const universities = await searchUniversities(
+      name,
+      country,
+      career,
+      limit,
+      page,
+    );
 
     return res.json(universities);
   } catch (error) {
