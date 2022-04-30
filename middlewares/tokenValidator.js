@@ -5,7 +5,7 @@ const User = require('../api/users/users.model');
 
 const validateJwtMw = async (req = request, res = response, next) => {
   const authHeader = req.headers.authorization;
-
+  console.log(authHeader);
   if (!authHeader) {
     return res.status(401).json({
       msg: 'There is no token',
