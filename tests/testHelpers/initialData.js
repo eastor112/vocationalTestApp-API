@@ -121,19 +121,19 @@ const initialUsers = [{
 
 const initialUniversities = [{
   name: 'Universidad de los Andes',
-  location: {
+  address: {
     country: 'Colombia',
     city: 'Bogota',
   },
 }, {
   name: 'Harvard university',
-  location: {
+  address: {
     country: 'United States',
     city: 'Cambridge',
   },
 }, {
   name: 'Cambridge university',
-  location: {
+  address: {
     country: 'Peru',
     city: 'Cambridge',
   },

@@ -8,6 +8,7 @@ const Offers = require('../offers/offers.model');
 const QuestionResponse = require('../questionResponse/questionResponse.model');
 const Tests = require('../vocationalTest/vocationalTest.model');
 const Questions = require('../questions/questions.model');
+const Offer = require('../offers/offers.model');
 
 const searchUsers = async (query, limit, page) => {
   const isMongoId = ObjectId.isValid(query);
@@ -74,7 +75,7 @@ const searchUsers = async (query, limit, page) => {
   };
 };
 
-const searchUniversities = async (query, limit, page) => {
+const searchUniversities = async (query, limit, page, target) => {
   const isMongoId = ObjectId.isValid(query);
 
   if (isMongoId) {
@@ -88,31 +89,59 @@ const searchUniversities = async (query, limit, page) => {
     };
   }
 
-  const queryRegex = new RegExp(query, 'i');
-
-  const criteria = {
-    $or: [
-      { name: queryRegex },
-      { 'address.city': queryRegex },
-      { 'address.Country': queryRegex },
-      { 'offer.name': queryRegex }],
-    $and: [{ state: true }],
-  };
-
-  const [total, universities] = await Promise.all([
-    University.countDocuments(criteria),
-    University.find(criteria)
+  if (target === 'country') {
+    const universities = await University.find({ 'address.country': query, state: true })
       .limit(limit)
       .skip(limit * (page - 1))
-      .populate('offer', 'name'),
-  ]);
+      .populate('offer', 'name')
+      .sort({ 'ranking.national': 1 });
 
-  return {
-    totalDocs: total,
-    currentPage: Number(page),
-    totalPages: Math.ceil(total / limit),
-    results: universities,
-  };
+    return {
+      totalDocs: universities.length,
+      currentPage: Number(page),
+      totalPages: Math.ceil(universities.length / limit),
+      results: universities,
+    };
+  }
+
+  const queryRegex = new RegExp(query, 'i');
+
+  if (target === 'name') {
+    const universities = await University.find({ name: queryRegex, state: true })
+      .limit(limit)
+      .skip(limit * (page - 1))
+      .populate('offer', 'name')
+      .sort({ 'ranking.national': 1 });
+
+    return {
+      totalDocs: universities.length,
+      currentPage: Number(page),
+      totalPages: Math.ceil(universities.length / limit),
+      results: universities,
+    };
+  }
+
+  // this is not working
+  if (target === 'career') {
+    const offers = await Offer.find({ name: queryRegex, state: true }, 'university');
+
+    const universities = await University.find({
+      _id: { $in: offers.map((offer) => offer.university) },
+      state: true,
+    }).limit(limit)
+      .skip(limit * (page - 1))
+      .populate('offer', 'name')
+      .sort({ 'ranking.national': 1 });
+
+    return {
+      totalDocs: universities.length,
+      currentPage: Number(page),
+      totalPages: Math.ceil(universities.length / limit),
+      results: universities,
+    };
+  }
+
+  throw new Error('Invalid target');
 };
 
 const searchCareers = async (query, limit, page) => {

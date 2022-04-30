@@ -26,10 +26,10 @@ const handlerUsersSearch = async (req, res) => {
 
 const handlerUniversitiesSearch = async (req, res) => {
   const { query } = req.params;
-  const { limit = 5, page = 1 } = req.query;
+  const { limit = 5, page = 1, target, order } = req.query;
 
   try {
-    const universities = await searchUniversities(query, limit, page);
+    const universities = await searchUniversities(query, limit, page, target);
 
     return res.json(universities);
   } catch (error) {

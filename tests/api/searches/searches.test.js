@@ -165,26 +165,16 @@ describe('Searches enpoints tests', () => {
 
   test('should search an university by name', async () => {
     const response = await request
-      .get(`/api/search/universities/${initialUniversities[0].name}`);
+      .get(`/api/search/universities/${initialUniversities[0].name}?target=name`);
 
     expect(response.status).toBe(200);
     expect(response.body.totalDocs).toBe(1);
     expect(response.body.results[0].name).toBe(initialUniversities[0].name);
   });
 
-  test('should search an university by city', async () => {
-    const response = await request
-      .get(`/api/search/universities/${initialUniversities[0].location.city}`);
-
-    const universitiesName = await response.body.results.map((result) => result.name);
-
-    expect(response.status).toBe(200);
-    expect(universitiesName).toContain(initialUniversities[0].name);
-  });
-
   test('should search an university by country', async () => {
     const response = await request
-      .get(`/api/search/universities/${initialUniversities[0].location.country}`);
+      .get(`/api/search/universities/${initialUniversities[0].address.country}?target=country`);
 
     const universitiesName = await response.body.results.map((result) => result.name);
 
