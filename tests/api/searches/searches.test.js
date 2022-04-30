@@ -147,25 +147,9 @@ describe('Searches enpoints tests', () => {
     expect(universityIds).toContain(universityId);
   });
 
-  test('should not search an university with a wrong id', async () => {
-    const response = await request
-      .get(`/api/search/universities/${userUid}`);
-
-    expect(response.status).toBe(200);
-    expect(response.body.totalDocs).toBe(0);
-  });
-
-  test('should search an university by id', async () => {
-    const response = await request
-      .get(`/api/search/universities/${universityId}`);
-
-    expect(response.status).toBe(200);
-    expect(response.body.totalDocs).toBe(1);
-  });
-
   test('should search an university by name', async () => {
     const response = await request
-      .get(`/api/search/universities/${initialUniversities[0].name}?target=name`);
+      .get(`/api/search/universities?name=${initialUniversities[0].name}`);
 
     expect(response.status).toBe(200);
     expect(response.body.totalDocs).toBe(1);
@@ -174,7 +158,7 @@ describe('Searches enpoints tests', () => {
 
   test('should search an university by country', async () => {
     const response = await request
-      .get(`/api/search/universities/${initialUniversities[0].address.country}?target=country`);
+      .get(`/api/search/universities?country=${initialUniversities[0].address.country}`);
 
     const universitiesName = await response.body.results.map((result) => result.name);
 
