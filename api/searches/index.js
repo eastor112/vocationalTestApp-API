@@ -20,7 +20,7 @@ router.get('/users/:query', [
   isAdminRoleMw,
 ], handlerUsersSearch);
 
-router.get('/universities/:query', [
+router.get('/universities', [
 ], handlerUniversitiesSearch);
 
 router.get('/careers/:query', [
