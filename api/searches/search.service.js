@@ -334,24 +334,6 @@ const searchOffers = async (query, limit, page, target) => {
         results: offers,
       };
     }
-
-    if (target === 'career') {
-      if (ObjectId.isValid(query)) {
-        const [total, offers] = await Promise.all([
-          await Offers.countDocuments({ career: { _id: query }, state: true }),
-          Offers.find({ career: { _id: query, state: true } })
-            .populate('university', 'name')
-            .populate('career', 'name'),
-        ]);
-
-        return {
-          totalDocs: total,
-          currentPage: 1,
-          totalPages: 1,
-          results: offers,
-        };
-      }
-    }
   }
 
   const queryRegex = new RegExp(query, 'i');
