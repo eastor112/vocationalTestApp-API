@@ -23,9 +23,9 @@ const activateEmailTemplate = (userEmail, passResetToken) => ({
   subject: 'Activate your account',
   template_id: process.env.EMAIL_TEMPLATE_ID_ACTIVATE,
   dynamic_template_data: {
-    url: `${process.env.NODE_ENV === 'develop'
-      ? process.env.BASE_URL_DEV
-      : process.env.BASE_URL_PROD}/activate/${passResetToken}`,
+    url: (process.env.NODE_ENV === 'develop')
+      ? `${process.env.BASE_URL_DEV}/activate/${passResetToken}`
+      : `${process.env.BASE_URL_PROD}/activate/${passResetToken}`,
   },
 });
 

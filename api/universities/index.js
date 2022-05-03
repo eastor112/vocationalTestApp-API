@@ -39,6 +39,7 @@ router.post('/', [
 router.patch('/:id', [
   validateJwtMw,
   check('id', 'is not a valid id').isMongoId(),
+  check('id').custom(universityExistById),
   universityIdValidatorMw,
   fieldsValidatorMw,
   upload.fields([{

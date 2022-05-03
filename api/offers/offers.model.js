@@ -7,6 +7,7 @@ const OffersSchema = new mongoose.Schema({
   },
   duration: {
     type: Number,
+    default: 0,
   },
   description: {
     type: String,
@@ -14,9 +15,11 @@ const OffersSchema = new mongoose.Schema({
   },
   url: {
     type: String,
+    default: '',
   },
   photo: {
     type: String,
+    default: '',
   },
   university: {
     type: mongoose.Schema.Types.ObjectId,

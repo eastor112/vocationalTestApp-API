@@ -26,7 +26,7 @@ const handlerOneUniversity = async (req, res) => {
 
     res.json(university);
   } catch (error) {
-    res.status(500).json({ msg: 'Error getting university' });
+    res.status(500).json({ msg: error.message });
   }
 };
 
@@ -56,31 +56,31 @@ const handlerCreateUniversity = async (req, res) => {
 const handlerUpdateUniversity = async (req, res) => {
   const { id } = req.params;
   const universityOld = req.university;
-  const { _id, state, createdAt, updatedAp, __v, ...rest } = req.body;
+  const { _id, state, logo, campus, createdAt, updatedAp, __v, ...rest } = req.body;
 
   try {
     if (req.files) {
-      const { logo, campus } = req.files;
+      const { logo: logoo, campus: campuss } = req.files;
 
-      if (campus) {
+      if (campuss) {
         if (universityOld.campus.length < 5) {
           const secureUrlCampus = await uploadToCloudinaryAndCleanTemp(
-            campus[0].path,
+            campuss[0].path,
             `universities/${universityOld.id}`,
           );
           rest.campus = [...universityOld.campus, secureUrlCampus];
         } else {
-          cleanLocal(campus[0].path);
+          cleanLocal(campuss[0].path);
 
-          if (logo) cleanLocal(logo[0].path);
+          if (logoo) cleanLocal(logoo[0].path);
 
           return res.status(400).json({ msg: 'You can only add 5 images' });
         }
       }
 
-      if (logo) {
+      if (logoo) {
         const secureUrlLogo = await uploadToCloudinaryAndCleanTemp(
-          logo[0].path,
+          logoo[0].path,
           `universities/${universityOld.id}`,
         );
         rest.logo = secureUrlLogo;

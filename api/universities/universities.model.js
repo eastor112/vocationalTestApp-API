@@ -5,21 +5,48 @@ const UniversitySchema = new mongoose.Schema({
     required: true,
     type: String,
   },
-  logo: String,
+  logo: {
+    type: String,
+    default: '',
+  },
   campus: [String],
   ranking: {
-    national: Number,
-    worldwide: Number,
+    national: {
+      type: Number,
+      default: 1,
+    },
+    worldwide: {
+      type: Number,
+      default: 1,
+    },
   },
-  mission: String,
-  vision: String,
+  mission: {
+    type: String,
+    default: '',
+  },
+  vision: {
+    type: String,
+    default: '',
+  },
   process: [String],
   address: {
-    country: String,
-    city: String,
+    country: {
+      type: String,
+      default: '',
+    },
+    city: {
+      type: String,
+      default: '',
+    },
     geo: {
-      lat: String,
-      lng: String,
+      lat: {
+        type: String,
+        default: '',
+      },
+      lng: {
+        type: String,
+        default: '',
+      },
     },
   },
   offer: [{
@@ -28,16 +55,29 @@ const UniversitySchema = new mongoose.Schema({
   }],
   url: {
     type: String,
+    default: '',
+  },
+  socialMedia: {
+    linkedIn: {
+      type: String,
+      default: '',
+    },
+    facebook: {
+      type: String,
+      default: '',
+    },
+    twitter: {
+      type: String,
+      default: '',
+    },
+    instagram: {
+      type: String,
+      default: '',
+    },
   },
   state: {
     type: Boolean,
     default: true,
-  },
-  socialMedia: {
-    linkedIn: String,
-    facebook: String,
-    twitter: String,
-    instagram: String,
   },
 }, {
   timestamps: true,

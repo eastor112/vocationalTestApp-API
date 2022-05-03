@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { check, body, sanitizeBody } = require('express-validator');
+const { check } = require('express-validator');
 const { offersExistById, isCareerMongoIdAndExistOrEmpty, isUniversityMongoIdAndExistOrEmpty } = require('../../helpers/customValidators');
 const { fieldsValidatorMw } = require('../../middlewares/fieldsValidator');
 const { validateJwtMw } = require('../../middlewares/tokenValidator');
@@ -9,6 +9,7 @@ const {
   handlerCreateOffer,
   handlerUpdateOffer,
   handlerDeleteOffer,
+  handlerDestroyOffer,
 } = require('./offers.controller');
 const upload = require('../../config/multer');
 
@@ -25,9 +26,6 @@ router.get('/:id', [
 router.post('/', [
   validateJwtMw,
   check('name', 'name is required').notEmpty(),
-  check('university', 'university id is required').notEmpty(),
-  check('university', 'university id is not valid').isMongoId(),
-  check('career').custom(isCareerMongoIdAndExistOrEmpty),
   fieldsValidatorMw,
 ], handlerCreateOffer);
 
@@ -36,7 +34,6 @@ router.patch('/:id', [
   check('id').isMongoId(),
   check('id').custom(offersExistById),
   check('university').custom(isUniversityMongoIdAndExistOrEmpty),
-  check('career').custom(isCareerMongoIdAndExistOrEmpty),
   fieldsValidatorMw,
   upload.single('photo'),
 ], handlerUpdateOffer);
@@ -47,5 +44,12 @@ router.delete('/:id', [
   check('id').custom(offersExistById),
   fieldsValidatorMw,
 ], handlerDeleteOffer);
+
+router.delete('/:id/destroy', [
+  validateJwtMw,
+  check('id').isMongoId(),
+  check('id').custom(offersExistById),
+  fieldsValidatorMw,
+], handlerDestroyOffer);
 
 module.exports = router;
