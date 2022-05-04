@@ -5,6 +5,7 @@ const {
   createOffer,
   updateOffer,
   deleteOffer,
+  destroyOffer,
 } = require('./offers.service');
 
 const handlerGetAllOffers = async (req, res) => {
@@ -38,7 +39,7 @@ const handlerCreateOffer = async (req, res) => {
 
     return res.status(201).json(offer);
   } catch (error) {
-    return res.status(500).json({ msg: 'Error creating offer' });
+    return res.status(500).json({ msg: error.message });
   }
 };
 
@@ -55,7 +56,7 @@ const handlerUpdateOffer = async (req, res) => {
     const offer = await updateOffer(id, rest);
     return res.json(offer);
   } catch (error) {
-    return res.status(500).json({ msg: 'Error updating offer' });
+    return res.status(500).json({ msg: error.message });
   }
 };
 
@@ -69,7 +70,21 @@ const handlerDeleteOffer = async (req, res) => {
       msg: `Offer ${offer.name} was deleted`,
     });
   } catch (error) {
-    return res.status(500).json({ msg: 'Error deleting offer' });
+    return res.status(500).json({ msg: error.message });
+  }
+};
+
+const handlerDestroyOffer = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const offer = await destroyOffer(id);
+
+    return res.status(204).json({
+      msg: `Offer ${offer.name} was deleted`,
+    });
+  } catch (error) {
+    return res.status(500).json({ msg: error.message });
   }
 };
 
@@ -79,4 +94,5 @@ module.exports = {
   handlerCreateOffer,
   handlerUpdateOffer,
   handlerDeleteOffer,
+  handlerDestroyOffer,
 };

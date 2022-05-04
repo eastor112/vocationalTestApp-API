@@ -20,11 +20,7 @@ const getAllUniversities = async (limit, page) => {
 
 async function getOneUniversity(id) {
   const university = await University.findOne({ _id: id, state: true })
-    .populate('offer', 'name description');
-
-  if (!university) {
-    return null;
-  }
+    .populate({ path: 'offer', select: '-__v -state -createdAt -updatedAt', populate: { path: 'career', select: 'name' } });
 
   return university;
 }

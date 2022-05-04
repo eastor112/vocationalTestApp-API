@@ -220,16 +220,6 @@ describe('Searches enpoints tests', () => {
     expect(offerUniversityIds).toContain(universityId);
   });
 
-  test('should search offers by career id', async () => {
-    const response = await request
-      .get(`/api/search/offers/${careerId}?target=career`);
-
-    const offerCareerIds = await response.body.results.map((result) => result.career._id);
-
-    expect(response.status).toBe(200);
-    expect(offerCareerIds).toContain(careerId);
-  });
-
   test('should search offers by name', async () => {
     const response = await request
       .get(`/api/search/offers/${initialOffers[0].name}`);
