@@ -65,7 +65,7 @@ describe('Searches enpoints tests', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({ ...initialOffers[0], university: universityId, career: careerId });
 
-    offerId = response.body.id;
+    offerId = response.body._id;
 
     response = await request.post('/api/billings')
       .set('Authorization', `Bearer ${token}`)

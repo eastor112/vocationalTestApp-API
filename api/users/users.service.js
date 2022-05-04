@@ -57,8 +57,7 @@ const updateUser = async (id, rest) => {
 
   if (rest.profile) cleanCloudinary(userOld.profile, 'users');
 
-  const updatedUser = await User.findByIdAndUpdate(id, rest, { new: true })
-    .populate('university', 'name');
+  const updatedUser = await User.findByIdAndUpdate(id, rest, { new: true });
 
   return updatedUser;
 };

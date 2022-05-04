@@ -38,8 +38,7 @@ const OffersSchema = new mongoose.Schema({
 
 OffersSchema.methods.toJSON = function () {
   const offer = this;
-  const { _id, state, __v, ...rest } = offer.toObject();
-  rest.id = _id;
+  const { state, __v, ...rest } = offer.toObject();
 
   return rest;
 };
