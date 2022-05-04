@@ -39,7 +39,8 @@ const createOffer = async (data) => {
     delete dataCopy.career;
   }
 
-  const offer = await Offers.create(dataCopy);
+  let offer = await Offers.create(dataCopy);
+  offer = await offer.populate('career', 'name');
 
   await University.findByIdAndUpdate(offer.university, { $push: { offer: offer._id } });
 
