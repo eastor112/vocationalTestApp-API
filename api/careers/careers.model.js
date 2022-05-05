@@ -7,10 +7,12 @@ const CareersSchema = new mongoose.Schema({
   },
   description: {
     type: String,
+    default: '',
   },
   field: {
     description: {
       type: String,
+      default: '',
     },
     list: [String],
     references: [String],
@@ -18,6 +20,7 @@ const CareersSchema = new mongoose.Schema({
   skills: {
     description: {
       type: String,
+      default: '',
     },
     list: [String],
     references: [String],

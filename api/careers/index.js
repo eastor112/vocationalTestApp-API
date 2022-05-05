@@ -13,6 +13,7 @@ const {
   handlerCreateCareer,
   handlerUpdateCareer,
   handlerDeleteCareer,
+  handleDestroyCareer,
 } = require('./careers.controller');
 
 const router = Router();
@@ -50,5 +51,13 @@ router.delete('/:id', [
   check('id').custom(careerExistById),
   fieldsValidatorMw,
 ], handlerDeleteCareer);
+
+router.delete('/:id/destroy', [
+  validateJwtMw,
+  isAdminRoleMw,
+  check('id', 'id is not valid').isMongoId(),
+  check('id').custom(careerExistById),
+  fieldsValidatorMw,
+], handleDestroyCareer);
 
 module.exports = router;
