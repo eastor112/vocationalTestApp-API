@@ -4,6 +4,7 @@ const {
   createCareer,
   updateCareer,
   deleteCareer,
+  destroyCareer,
 } = require('./careers.service');
 const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
 const CareersNames = require('../../commonModels/careersNames');
@@ -87,6 +88,17 @@ const handlerDeleteCareer = async (req, res) => {
   }
 };
 
+const handleDestroyCareer = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await destroyCareer(id);
+
+    return res.status(204).json({ msg: `Career deleted with id${id}` });
+  } catch (error) {
+    return res.status(500).json({ msg: 'Error deleting career' });
+  }
+};
+
 module.exports = {
   handlerGetAllCareersNames,
   handlerGetAllCareers,
@@ -94,4 +106,5 @@ module.exports = {
   handlerCreateCareer,
   handlerUpdateCareer,
   handlerDeleteCareer,
+  handleDestroyCareer,
 };

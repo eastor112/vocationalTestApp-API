@@ -14,7 +14,7 @@ const getAllCareers = async (limit, page) => {
     totalDocs: total,
     currentPage: Number(page),
     totalPages: Math.ceil(total / limit),
-    careers,
+    results: careers,
   };
 };
 
@@ -46,10 +46,20 @@ const deleteCareer = async (id) => {
   return career;
 };
 
+const destroyCareer = async (id) => {
+  const career = await Careers.findByIdAndDelete(id);
+
+  await CareersNames.findOneAndDelete({ name: career.name });
+  cleanCloudinary(career.photo, 'careers');
+
+  return career;
+};
+
 module.exports = {
   getAllCareers,
   getOneCareer,
   createCareer,
   updateCareer,
   deleteCareer,
+  destroyCareer,
 };
