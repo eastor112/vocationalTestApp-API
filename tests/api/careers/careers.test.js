@@ -116,7 +116,7 @@ describe('Careers enpoints tests', () => {
     const response = await request
       .get('/api/careers');
 
-    const careers = response.body.careers.map((r) => r.name);
+    const careers = response.body.results.map((r) => r.name);
 
     expect(response.status).toBe(200);
     expect(response.body).toHaveProperty('totalDocs');
@@ -163,7 +163,7 @@ describe('Careers enpoints tests', () => {
     let response = await request
       .get('/api/careers');
 
-    const totalCareersPre = response.body.careers.length;
+    const totalCareersPre = response.body.results.length;
 
     response = await request
       .delete(`/api/careers/${id}`)
@@ -174,7 +174,7 @@ describe('Careers enpoints tests', () => {
     response = await request
       .get('/api/careers');
 
-    const totalCareersPost = response.body.careers.length;
+    const totalCareersPost = response.body.results.length;
 
     expect(totalCareersPre - totalCareersPost).toBe(1);
   });
