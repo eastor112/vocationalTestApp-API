@@ -34,6 +34,15 @@ const TestSchema = new mongoose.Schema({
     D: [String],
     E: [String],
   },
+  author: {
+    type: String,
+    default: '',
+  },
+  status: {
+    type: String,
+    enum: ['PUBLISHED', 'UNPUBLISHED'],
+    default: 'PUBLISHED',
+  },
   numberOfQuestions: {
     type: Number,
     required: true,
