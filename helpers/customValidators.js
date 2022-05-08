@@ -29,9 +29,11 @@ const isValidRoleOrEmpty = async (rol) => {
 };
 
 const isValidQuestionType = async (type) => {
-  const questionType = await QuestionType.findOne({ type });
-  if (!questionType) {
-    throw new Error(`the question type ${type} doesn't exist`);
+  if (type) {
+    const questionType = await QuestionType.findOne({ type });
+    if (!questionType) {
+      throw new Error(`the question type ${type} doesn't exist`);
+    }
   }
 };
 

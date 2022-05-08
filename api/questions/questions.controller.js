@@ -47,7 +47,7 @@ const handlerCreateQuestion = async (req, res) => {
 
     return res.status(201).json(question);
   } catch (error) {
-    return res.status(500).json({ msg: 'Error creating question' });
+    return res.status(500).json({ msg: error.message });
   }
 };
 

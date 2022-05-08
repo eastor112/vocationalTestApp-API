@@ -13,18 +13,23 @@ const TestSchema = new mongoose.Schema({
   descriptions: {
     A: {
       type: String,
+      default: '',
     },
     B: {
       type: String,
+      default: '',
     },
     C: {
       type: String,
+      default: '',
     },
     D: {
       type: String,
+      default: '',
     },
     E: {
       type: String,
+      default: '',
     },
   },
   results: {
