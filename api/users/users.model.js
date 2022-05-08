@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const University = require('../universities/universities.model');
+const TestResults = require('../testResults/testResults.model');
+const Billing = require('../billings/billings.model');
+const Checkout = require('../checkout/checkout.model');
 
 const UserSchema = new mongoose.Schema({
   names: {
@@ -141,6 +145,39 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
   return next();
 });
 
+UserSchema.pre('remove', async function (next) {
+  const user = this;
+
+  if (user.university) {
+    const university = await University.findById(user.university);
+    await university.remove();
+  }
+
+  const testResults = await TestResults.find({ user: user._id });
+  if (testResults) {
+    testResults.forEach(async (testResult) => {
+      await testResult.remove();
+    });
+  }
+
+  const billing = await Billing.find({ user: user._id });
+  if (billing) {
+    billing.forEach(async (bill) => {
+      bill.user = new mongoose.Types.ObjectId('6277f4543eb3df592c33323c');
+      await bill.save();
+    });
+  }
+
+  const checkout = await Checkout.find({ user: user._id });
+  if (checkout) {
+    checkout.forEach(async (check) => {
+      await check.remove();
+    });
+  }
+
+  next();
+});
+
 UserSchema.methods.comparePassword = async function (candidatePassword) {
   const user = this;
   try {
@@ -153,6 +190,13 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 UserSchema.methods.toJSON = function () {
   const user = this;
   /* eslint-disable */
+  if (user.role === 'ADMIN') {
+    const { password, _id, __v, ...rest } = user.toObject();
+    rest.uid = _id;
+
+    return rest;
+  }
+
   const { password, _id, __v, state, ...rest } = user.toObject();
   rest.uid = _id;
   /* eslint-enable */

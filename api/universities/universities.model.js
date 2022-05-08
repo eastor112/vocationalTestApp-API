@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Offers = require('../offers/offers.model');
 
 const UniversitySchema = new mongoose.Schema({
   name: {
@@ -81,6 +82,17 @@ const UniversitySchema = new mongoose.Schema({
   },
 }, {
   timestamps: true,
+});
+
+UniversitySchema.pre('remove', async function (next) {
+  const university = this;
+
+  try {
+    await Offers.deleteMany({ university: university._id });
+    return next();
+  } catch (error) {
+    return next(error);
+  }
 });
 
 UniversitySchema.methods.toJSON = function () {

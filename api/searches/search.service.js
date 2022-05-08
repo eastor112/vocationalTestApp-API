@@ -54,6 +54,7 @@ const searchUsers = async (query, limit, page) => {
       { fatherName: queryRegex },
       { motherName: queryRegex },
       { role: queryRegex },
+      { phone: queryRegex },
       { 'address.country': queryRegex },
       { 'address.city': queryRegex }],
     $and: [{ state: true }],
