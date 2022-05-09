@@ -46,7 +46,7 @@ const createUser = async (user) => {
   if (process.env.NODE_ENV !== 'test') {
     const emailTemplate = activateEmailTemplate(newUser.email, newUser.passResetToken);
 
-    // await sendMailWithSengrid(emailTemplate);
+    await sendMailWithSengrid(emailTemplate);
   }
 
   return newUser;

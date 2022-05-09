@@ -62,7 +62,7 @@ describe('Users enpoints tests', () => {
       .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.users.length).toBe(initialUsers.length);
+    expect(response.body.results.length).toBe(initialUsers.length);
   });
 
   test('should not create a user with a same email', async () => {
