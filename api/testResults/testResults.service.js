@@ -52,10 +52,18 @@ const deleteTestResults = async (id) => {
   return testResult;
 };
 
+const destroyTestResults = async (id) => {
+  const testResult = await TestResults.findById(id);
+  await testResult.remove();
+
+  return testResult;
+};
+
 module.exports = {
   getAllTestResults,
   getOneTestResults,
   createTestResults,
   updateTestResults,
   deleteTestResults,
+  destroyTestResults,
 };
