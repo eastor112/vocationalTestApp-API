@@ -7,6 +7,7 @@ const {
   createTestResults,
   updateTestResults,
   deleteTestResults,
+  destroyTestResults,
 } = require('./testResults.service');
 
 const handlerGetAllTestResults = async (req, res) => {
@@ -91,10 +92,25 @@ const handlerDeleteTestResults = async (req, res) => {
   }
 };
 
+const hadlerDestroyTestResults = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await destroyTestResults(id);
+
+    return res.status(204).json({ msg: `TestResult with id: ${id} was deleted ` });
+  } catch (error) {
+    return res.status(500).json({
+      msg: 'Error deleting TestResult',
+    });
+  }
+};
+
 module.exports = {
   handlerGetAllTestResults,
   handlerGetOneTestResults,
   handlerCreateTestResults,
   handlerUpdateTestResults,
   handlerDeleteTestResults,
+  hadlerDestroyTestResults,
 };

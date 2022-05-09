@@ -1,4 +1,3 @@
-const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
 const University = require('./universities.model');
 
 const getAllUniversities = async (limit, page) => {
@@ -55,10 +54,19 @@ async function updateUniversity(id, rest) {
   return updatedUniversity;
 }
 
+async function getUniversityCountries() {
+  const universities = await University.find({ state: true });
+  const countries = universities.map((university) => university.address.country);
+  const uniqueCountries = [...new Set(countries)];
+
+  return uniqueCountries;
+}
+
 module.exports = {
   getAllUniversities,
   getOneUniversity,
   deleteUniversity,
   createUniversity,
   updateUniversity,
+  getUniversityCountries,
 };

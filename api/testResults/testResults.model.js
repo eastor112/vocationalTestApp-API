@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const QuestionResponse = require('../questionResponse/questionResponse.model');
 
 const TestResultsSchema = new mongoose.Schema({
   user: {
@@ -31,6 +32,17 @@ const TestResultsSchema = new mongoose.Schema({
   },
 }, {
   timestamps: true,
+});
+
+TestResultsSchema.pre('remove', async function (next) {
+  const testResult = this;
+
+  try {
+    await QuestionResponse.deleteMany({ testResult: testResult._id });
+    return next();
+  } catch (error) {
+    return next(error);
+  }
 });
 
 TestResultsSchema.methods.toJSON = function () {

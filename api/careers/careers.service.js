@@ -1,6 +1,5 @@
 const Careers = require('./careers.model');
 const { cleanCloudinary } = require('../../helpers/cloudinaryActions');
-const CareersNames = require('../../commonModels/careersNames');
 
 const getAllCareers = async (limit, page) => {
   const [total, careers] = await Promise.all([
@@ -25,7 +24,6 @@ const getOneCareer = async (id) => {
 
 const createCareer = async (rest) => {
   const career = await Careers.create(rest);
-  await CareersNames.create({ name: career.name });
 
   return career;
 };
@@ -36,7 +34,6 @@ const updateCareer = async (id, rest) => {
   if (rest.photo) cleanCloudinary(careerOld.photo, 'careers');
 
   const career = await Careers.findByIdAndUpdate(id, rest, { new: true });
-  await CareersNames.findOneAndUpdate({ name: careerOld.name }, { name: career.name });
 
   return career;
 };
@@ -49,10 +46,17 @@ const deleteCareer = async (id) => {
 const destroyCareer = async (id) => {
   const career = await Careers.findByIdAndDelete(id);
 
-  await CareersNames.findOneAndDelete({ name: career.name });
   cleanCloudinary(career.photo, 'careers');
 
   return career;
+};
+
+const getAllCareerNames = async () => {
+  const careers = await Careers.find({ state: true });
+  const names = careers.map((career) => career.name);
+  const uniqueNames = [...new Set(names)];
+
+  return uniqueNames;
 };
 
 module.exports = {
@@ -62,4 +66,5 @@ module.exports = {
   updateCareer,
   deleteCareer,
   destroyCareer,
+  getAllCareerNames,
 };

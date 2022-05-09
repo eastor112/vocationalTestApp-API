@@ -4,6 +4,7 @@ const {
   deleteUser,
   createUser,
   updateUser,
+  destroyUser,
 } = require('./users.service');
 const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
 
@@ -104,10 +105,23 @@ const handlerUpdateUser = async (req, res) => {
   }
 };
 
+const handlerDestroyUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { email } = await destroyUser(id);
+
+    res.status(204).json({ msg: `User ${email} was deleted` });
+  } catch (error) {
+    res.status(500).json({ msg: 'Error deleting user' });
+  }
+};
+
 module.exports = {
   handlerAllUsers,
   handlerOneUser,
   handlerDeleteUser,
   handlerCreateUser,
   handlerUpdateUser,
+  handlerDestroyUser,
 };

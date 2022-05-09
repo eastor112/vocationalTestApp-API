@@ -18,7 +18,7 @@ const getAllUsers = async (limit, page) => {
     totalDocs: total,
     currentPage: Number(page),
     totalPages: Math.ceil(total / limit),
-    users,
+    results: users,
   };
 };
 
@@ -46,7 +46,7 @@ const createUser = async (user) => {
   if (process.env.NODE_ENV !== 'test') {
     const emailTemplate = activateEmailTemplate(newUser.email, newUser.passResetToken);
 
-    await sendMailWithSengrid(emailTemplate);
+    // await sendMailWithSengrid(emailTemplate);
   }
 
   return newUser;
@@ -62,10 +62,18 @@ const updateUser = async (id, rest) => {
   return updatedUser;
 };
 
+const destroyUser = async (id) => {
+  const user = await User.findById(id);
+  await user.remove();
+
+  return user;
+};
+
 module.exports = {
   getAllUsers,
   getOneUser,
   deleteUser,
   createUser,
   updateUser,
+  destroyUser,
 };
