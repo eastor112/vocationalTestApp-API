@@ -3,7 +3,14 @@ const { check } = require('express-validator');
 const { testResultExistById } = require('../../helpers/customValidators');
 const { fieldsValidatorMw } = require('../../middlewares');
 const { validateJwtMw } = require('../../middlewares/tokenValidator');
-const { handlerGetAllTestResults, handlerGetOneTestResults, handlerCreateTestResults, handlerUpdateTestResults, handlerDeleteTestResults } = require('./testResults.controller');
+const {
+  handlerGetAllTestResults,
+  handlerGetOneTestResults,
+  handlerCreateTestResults,
+  handlerUpdateTestResults,
+  handlerDeleteTestResults,
+  hadlerDestroyTestResults,
+} = require('./testResults.controller');
 
 const router = Router();
 
@@ -35,5 +42,12 @@ router.delete('/:id', [
   check('id').custom(testResultExistById),
   fieldsValidatorMw,
 ], handlerDeleteTestResults);
+
+router.delete('/:id/destroy', [
+  validateJwtMw,
+  check('id', 'id is not valid').isMongoId(),
+  check('id').custom(testResultExistById),
+  fieldsValidatorMw,
+], hadlerDestroyTestResults);
 
 module.exports = router;

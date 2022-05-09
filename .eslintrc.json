@@ -42,6 +42,7 @@
     "func-names": "off",
     "default-param-last": "off",
     "no-case-declarations": "off",
+    "no-param-reassign": "off",
     "no-underscore-dangle": [
       "error",
       {
@@ -49,6 +50,7 @@
           "_id"
         ]
       }
-    ]
+    ],
+    "prefer-arrow-callback": "off"
   }
 }

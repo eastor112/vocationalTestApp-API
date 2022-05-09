@@ -5,19 +5,9 @@ const {
   updateCareer,
   deleteCareer,
   destroyCareer,
+  getAllCareerNames,
 } = require('./careers.service');
 const { uploadToCloudinaryAndCleanTemp } = require('../../helpers/cloudinaryActions');
-const CareersNames = require('../../commonModels/careersNames');
-
-const handlerGetAllCareersNames = async (req, res) => {
-  try {
-    const careersNames = await CareersNames.find({});
-
-    res.json(careersNames);
-  } catch (error) {
-    res.status(500).json({ msg: 'Error getting careers names' });
-  }
-};
 
 const handlerGetAllCareers = async (req, res) => {
   const { page = 1, limit = 5 } = req.query;
@@ -99,12 +89,22 @@ const handleDestroyCareer = async (req, res) => {
   }
 };
 
+const handlerGetAllCareerNames = async (req, res) => {
+  try {
+    const careers = await getAllCareerNames();
+
+    return res.json(careers);
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
 module.exports = {
-  handlerGetAllCareersNames,
   handlerGetAllCareers,
   handlerGetOneCareer,
   handlerCreateCareer,
   handlerUpdateCareer,
   handlerDeleteCareer,
   handleDestroyCareer,
+  handlerGetAllCareerNames,
 };

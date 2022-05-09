@@ -15,6 +15,7 @@ const {
   handlerDeleteUser,
   handlerCreateUser,
   handlerUpdateUser,
+  handlerDestroyUser,
 } = require('./users.controller');
 
 const router = Router();
@@ -56,5 +57,13 @@ router.patch('/:id', [
   fieldsValidatorMw,
   upload.single('profile'),
 ], handlerUpdateUser);
+
+router.delete('/:id/destroy', [
+  validateJwtMw,
+  isAdminRoleMw,
+  check('id', 'id is not valid').isMongoId(),
+  check('id').custom(userExistById),
+  fieldsValidatorMw,
+], handlerDestroyUser);
 
 module.exports = router;

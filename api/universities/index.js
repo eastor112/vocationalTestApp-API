@@ -11,6 +11,7 @@ const {
   handlerCreateUniversity,
   handlerUpdateUniversity,
   handlerDeleteImageUniversity,
+  handlerGetUniversityCountries,
 } = require('./universities.controller');
 const { universityIdValidatorMw } = require('../../middlewares');
 
@@ -58,5 +59,7 @@ router.delete('/:id/dropimages', [
   universityIdValidatorMw,
   fieldsValidatorMw,
 ], handlerDeleteImageUniversity);
+
+router.get('/countries/codes', handlerGetUniversityCountries);
 
 module.exports = router;

@@ -5,6 +5,7 @@ const {
   createUniversity,
   updateUniversity,
   deleteUniversity,
+  getUniversityCountries,
 } = require('./universities.service');
 
 const handlerAllUniversities = async (req, res) => {
@@ -49,7 +50,7 @@ const handlerCreateUniversity = async (req, res) => {
 
     return res.status(201).json(newUniversity);
   } catch (error) {
-    return res.status(500).json({ msg: 'Error creating university' });
+    return res.status(500).json({ msg: error.message });
   }
 };
 
@@ -125,6 +126,16 @@ const handlerDeleteImageUniversity = async (req, res) => {
   return res.status(400).json({ msg: 'invalid target' });
 };
 
+const handlerGetUniversityCountries = async (req, res) => {
+  try {
+    const countries = await getUniversityCountries();
+
+    return res.json(countries);
+  } catch (err) {
+    return res.status(500).json({ msg: err.message });
+  }
+};
+
 module.exports = {
   handlerAllUniversities,
   handlerOneUniversity,
@@ -132,4 +143,5 @@ module.exports = {
   handlerCreateUniversity,
   handlerUpdateUniversity,
   handlerDeleteImageUniversity,
+  handlerGetUniversityCountries,
 };
