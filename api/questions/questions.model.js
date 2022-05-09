@@ -13,19 +13,23 @@ const QuestionSchema = new mongoose.Schema({
   },
   statement: {
     type: String,
-    required: true,
+    default: '',
   },
   optionA: {
     type: String,
+    default: '',
   },
   optionB: {
     type: String,
+    default: '',
   },
   optionC: {
     type: String,
+    default: '',
   },
   optionD: {
     type: String,
+    default: '',
   },
   optionE: {
     type: String,

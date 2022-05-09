@@ -13,18 +13,23 @@ const TestSchema = new mongoose.Schema({
   descriptions: {
     A: {
       type: String,
+      default: '',
     },
     B: {
       type: String,
+      default: '',
     },
     C: {
       type: String,
+      default: '',
     },
     D: {
       type: String,
+      default: '',
     },
     E: {
       type: String,
+      default: '',
     },
   },
   results: {
@@ -33,6 +38,15 @@ const TestSchema = new mongoose.Schema({
     C: [String],
     D: [String],
     E: [String],
+  },
+  author: {
+    type: String,
+    default: '',
+  },
+  status: {
+    type: String,
+    enum: ['PUBLISHED', 'UNPUBLISHED'],
+    default: 'PUBLISHED',
   },
   numberOfQuestions: {
     type: Number,
