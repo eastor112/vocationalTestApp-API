@@ -106,7 +106,33 @@ const searchUniversities = async (
     };
   } if (country === '' && career !== '' && name === '') {
     // only career
-    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+    if (ObjectId.isValid(career)) {
+      const offers = await Offer.find({ career: new ObjectId(career) }, 'university');
+
+      const criteria = {
+        _id: { $in: offers.map((offer) => offer.university) },
+        state: true,
+      };
+
+      const [total, universities] = await Promise.all([
+        University.countDocuments(criteria),
+        University.find(criteria)
+          .limit(limit)
+          .skip(limit * (page - 1))
+          .populate('offer', 'name')
+          .sort({ 'ranking.national': 1 }),
+      ]);
+
+      return {
+        totalDocs: total,
+        currentPage: Number(page),
+        totalPages: Math.ceil(total / limit),
+        results: universities,
+      };
+    }
+
+    const careers = await Careers.find({ name: careerRegex, state: true });
+    const offers = await Offer.find({ career: { $in: careers.map((car) => car._id) }, state: true }, 'university');
 
     const criteria = {
       _id: { $in: offers.map((offer) => offer.university) },
@@ -147,7 +173,13 @@ const searchUniversities = async (
     };
   } if (country === '' && career !== '' && name !== '') {
     // only name and career
-    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+    let offers;
+    if (ObjectId.isValid(career)) {
+      offers = await Offer.find({ career: new ObjectId(career) }, 'university');
+    } else {
+      const careers = await Careers.find({ name: careerRegex, state: true });
+      offers = await Offer.find({ career: { $in: careers.map((car) => car._id) }, state: true }, 'university');
+    }
 
     const criteria = {
       _id: { $in: offers.map((offer) => offer.university) },
@@ -172,7 +204,13 @@ const searchUniversities = async (
     };
   } if (country !== '' && career !== '' && name === '') {
     // only country and career
-    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+    let offers;
+    if (ObjectId.isValid(career)) {
+      offers = await Offer.find({ career: new ObjectId(career) }, 'university');
+    } else {
+      const careers = await Careers.find({ name: careerRegex, state: true });
+      offers = await Offer.find({ career: { $in: careers.map((car) => car._id) }, state: true }, 'university');
+    }
 
     const criteria = {
       _id: { $in: offers.map((offer) => offer.university) },
@@ -221,7 +259,13 @@ const searchUniversities = async (
     };
   } if (country !== '' && career !== '' && name !== '') {
     // all
-    const offers = await Offer.find({ name: careerRegex, state: true }, 'university');
+    let offers;
+    if (ObjectId.isValid(career)) {
+      offers = await Offer.find({ career: new ObjectId(career) }, 'university');
+    } else {
+      const careers = await Careers.find({ name: careerRegex, state: true });
+      offers = await Offer.find({ career: { $in: careers.map((car) => car._id) }, state: true }, 'university');
+    }
 
     const criteria = {
       _id: { $in: offers.map((offer) => offer.university) },
