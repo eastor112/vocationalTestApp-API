@@ -80,6 +80,10 @@ const UniversitySchema = new mongoose.Schema({
     type: Boolean,
     default: true,
   },
+  isPublicated: {
+    type: Boolean,
+    default: true,
+  },
 }, {
   timestamps: true,
 });
